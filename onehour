@@ -750,8 +750,11 @@ body {
 <script>
 // ════════════════════════════════════════════════════════
 //  REVENUE TRACKER — CONFIGURATION & ENGINE
-//  Targets and work hours are saved in localStorage so
-//  they persist between browser sessions automatically.
+//
+//  Storage strategy (tries each in order, uses first that works):
+//    1. localStorage  — persists across sessions (GitHub Pages)
+//    2. sessionStorage — persists within tab session (most previews)
+//    3. In-memory      — always works, resets on page reload
 // ════════════════════════════════════════════════════════
 
 const DEFAULTS = {
@@ -767,10 +770,42 @@ const DEFAULTS = {
 
 let cfg = { ...DEFAULTS };
 
+// ── STORAGE HELPERS ──────────────────────────────────────
+const STORE_KEY = 'revenueTrackerCfg';
+
+function storageGet() {
+  const sources = [
+    () => localStorage.getItem(STORE_KEY),
+    () => sessionStorage.getItem(STORE_KEY),
+  ];
+  for (const fn of sources) {
+    try { const v = fn(); if (v) return v; } catch(e) {}
+  }
+  return null;
+}
+
+function storageSet(val) {
+  const targets = [
+    () => localStorage.setItem(STORE_KEY, val),
+    () => sessionStorage.setItem(STORE_KEY, val),
+  ];
+  let saved = false;
+  for (const fn of targets) {
+    try { fn(); saved = true; break; } catch(e) {}
+  }
+  return saved;
+}
+
+function storageRemove() {
+  [() => localStorage.removeItem(STORE_KEY),
+   () => sessionStorage.removeItem(STORE_KEY)]
+    .forEach(fn => { try { fn(); } catch(e) {} });
+}
+
 // ── PERSISTENCE ──────────────────────────────────────────
 function loadSettings() {
   try {
-    const saved = localStorage.getItem('revenueTrackerCfg');
+    const saved = storageGet();
     if (saved) cfg = { ...DEFAULTS, ...JSON.parse(saved) };
   } catch(e) {}
   syncInputs();
@@ -798,9 +833,10 @@ function saveSettings() {
   cfg.workStartHour = sh; cfg.workStartMin = sm;
   cfg.workEndHour   = eh; cfg.workEndMin   = em;
 
-  try { localStorage.setItem('revenueTrackerCfg', JSON.stringify(cfg)); } catch(e) {}
+  const saved = storageSet(JSON.stringify(cfg));
 
   const msg = document.getElementById('saveMsg');
+  msg.textContent = saved ? '✓ Saved to browser' : '✓ Applied for this session';
   msg.classList.add('show');
   setTimeout(() => msg.classList.remove('show'), 2500);
   tick();
@@ -809,7 +845,7 @@ function saveSettings() {
 function resetSettings() {
   cfg = { ...DEFAULTS };
   syncInputs();
-  try { localStorage.removeItem('revenueTrackerCfg'); } catch(e) {}
+  storageRemove();
   tick();
 }
 
