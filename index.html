@@ -2,953 +2,1280 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!--
-  ╔══════════════════════════════════════════════════════════╗
-  ║          LIVE REVENUE TRACKER — 30/60/90 Day Plan        ║
-  ║                                                          ║
-  ║  Host on GitHub Pages:                                   ║
-  ║  1. Create a new repo (e.g. "revenue-tracker")           ║
-  ║  2. Upload this file as index.html                       ║
-  ║  3. Go to Settings → Pages → Deploy from main branch     ║
-  ║  4. Your live URL: https://USERNAME.github.io/REPONAME   ║
-  ║                                                          ║
-  ║  Customise targets in the Settings panel on the page.    ║
-  ║  Settings are saved in your browser automatically.       ║
-  ╚══════════════════════════════════════════════════════════╝
--->
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Revenue Tracker — 30/60/90 Day Plan</title>
-<meta name="description" content="Live revenue tracker with daily, monthly, quarterly and yearly goal progress.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet">
-
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HVAC Command Center — Fuquay-Varina NC</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@300;400;500;700&family=Barlow+Condensed:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-/* ─── TOKENS ─────────────────────────────────────────── */
-:root {
-  --bg:      #05080D;
-  --surf:    #0B1018;
-  --card:    #0F1620;
-  --border:  #182030;
-  --border2: #243040;
-  --teal:    #00D4AA;
-  --teal2:   #00A882;
-  --gold:    #F5A623;
-  --blue:    #4A9EFF;
-  --red:     #FF4D6A;
-  --text:    #E2EAF4;
-  --sub:     #8899AA;
-  --muted:   #445566;
-  --dim:     #1A2535;
+:root{
+  --bg:#040810;--s1:#070E1A;--s2:#0A1422;--s3:#0D1A2C;--card:#0F1E30;
+  --e1:#1A2E44;--e2:#253C54;--e3:#305060;
+  --cyan:#00F5C4;--cyan2:#00C49A;--cyan3:#008A6C;
+  --gold:#FFC043;--gold2:#D4971A;
+  --blue:#4AA8FF;--blue2:#1A7AE0;
+  --red:#FF4466;--red2:#CC1A3A;
+  --violet:#C06AFF;--violet2:#8A30D8;
+  --lime:#3EE888;--orange:#FF7A30;
+  --snow:#E4F2FF;--mist:#7A9ABB;--fog:#3A5870;--deep:#1B3048;
+  --f-display:'Bebas Neue',sans-serif;
+  --f-mono:'JetBrains Mono',monospace;
+  --f-body:'Barlow Condensed',sans-serif;
 }
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--snow);font-family:var(--f-body);min-height:100vh;overflow-x:hidden;font-size:13px;line-height:1.4}
 
-/* ─── RESET & BASE ───────────────────────────────────── */
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+.bg-wrap{position:fixed;inset:0;pointer-events:none;z-index:0}
+.bg-glow{background:radial-gradient(ellipse 80% 50% at -10% -5%,rgba(0,245,196,.06) 0%,transparent 55%),radial-gradient(ellipse 60% 40% at 110% 110%,rgba(74,168,255,.05) 0%,transparent 55%)}
+.bg-grid{background-image:linear-gradient(rgba(0,245,196,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,245,196,.03) 1px,transparent 1px);background-size:56px 56px}
+.bg-scan{background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,245,196,.008) 2px,rgba(0,245,196,.008) 4px);animation:scan 8s linear infinite}
+@keyframes scan{0%{background-position:0 0}100%{background-position:0 112px}}
 
-html { scroll-behavior: smooth; }
+.page{position:relative;z-index:1;max-width:1400px;margin:0 auto;padding:16px 14px 80px}
 
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Sora', sans-serif;
-  min-height: 100vh;
-  overflow-x: hidden;
-  cursor: default;
+/* TOP NAV */
+.topnav{display:flex;align-items:center;justify-content:space-between;gap:14px;background:var(--s1);border:1px solid var(--e1);border-radius:12px;padding:12px 20px;margin-bottom:12px;flex-wrap:wrap;position:relative;overflow:hidden}
+.topnav::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--cyan),rgba(0,245,196,.3),transparent 70%)}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-logo{width:40px;height:40px;border-radius:9px;flex-shrink:0;background:linear-gradient(135deg,var(--cyan),var(--cyan2));display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 0 24px rgba(0,245,196,.4)}
+.brand-name{font-family:var(--f-display);font-size:18px;letter-spacing:3px;line-height:1}
+.brand-sub{font-family:var(--f-mono);font-size:7px;color:var(--fog);letter-spacing:2px;text-transform:uppercase;margin-top:2px}
+.nav-pills{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.pill{font-family:var(--f-mono);font-size:7px;letter-spacing:1px;text-transform:uppercase;padding:3px 9px;border-radius:20px;border:1px solid var(--e1);color:var(--mist)}
+.pill-live{border-color:rgba(0,245,196,.4);color:var(--cyan);background:rgba(0,245,196,.06);display:flex;align-items:center;gap:4px}
+.pill-gold{border-color:rgba(255,192,67,.4);color:var(--gold);background:rgba(255,192,67,.06)}
+.pulsedot{width:5px;height:5px;border-radius:50%;background:var(--cyan);animation:pd 1.2s step-end infinite}
+@keyframes pd{50%{opacity:0}}
+.nav-clock{text-align:right}
+.clockface{font-family:var(--f-mono);font-size:24px;color:var(--cyan);letter-spacing:2px;line-height:1}
+.clockdate{font-family:var(--f-mono);font-size:7px;color:var(--fog);letter-spacing:1px;margin-top:2px}
+
+/* TICKER */
+.ticker{display:flex;background:var(--s1);border:1px solid var(--e1);border-radius:10px;padding:10px 18px;margin-bottom:12px;gap:0;overflow:hidden;position:relative}
+.tik{flex:1;min-width:90px;padding:0 14px;border-right:1px solid var(--e1);text-align:center}
+.tik:first-child{padding-left:0;text-align:left}.tik:last-child{border-right:none;text-align:right}
+.tik-v{font-family:var(--f-display);font-size:26px;letter-spacing:1px;line-height:1}
+.tik-l{font-family:var(--f-mono);font-size:7px;color:var(--fog);letter-spacing:2px;text-transform:uppercase;margin-top:3px}
+
+/* SECTIONS */
+.sec-hdr{display:flex;justify-content:space-between;align-items:center;padding:9px 16px;background:var(--s1);border:1px solid var(--e1);border-radius:9px;margin:14px 0 9px;cursor:pointer;user-select:none;transition:border-color .2s,background .15s}
+.sec-hdr:hover{border-color:var(--e2);background:var(--s2)}
+.sec-hdr.open{border-color:var(--e2)}
+.sec-l{display:flex;align-items:center;gap:8px}
+.sec-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.sec-ttl{font-family:var(--f-mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--mist)}
+.sec-badge{font-family:var(--f-mono);font-size:7px;color:var(--fog);background:var(--deep);border-radius:3px;padding:2px 7px;letter-spacing:1px}
+.sec-arr{font-size:9px;color:var(--fog);transition:transform .22s}
+.sec-hdr.open .sec-arr{transform:rotate(180deg)}
+.sec-body{display:none}
+.sec-body.open{display:block;animation:fadeIn .18s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+
+/* GRIDS */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.g5{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.g6{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+.g7{display:grid;grid-template-columns:repeat(7,1fr);gap:10px}
+.mb10{margin-bottom:10px}
+
+/* KPI CARDS */
+.kc{background:var(--s1);border:1px solid var(--e1);border-radius:11px;padding:13px 14px 10px;position:relative;overflow:hidden;transition:border-color .18s,transform .15s}
+.kc:hover{transform:translateY(-1px);border-color:var(--e2)}
+.kc::after{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.kc-l{font-family:var(--f-mono);font-size:7px;color:var(--fog);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px}
+.kc-v{font-family:var(--f-display);font-size:32px;letter-spacing:1px;line-height:1;margin-bottom:2px}
+.kc-s{font-family:var(--f-mono);font-size:8px;color:var(--fog);margin-top:5px}
+.kc-s b{color:var(--mist)}
+.kc-bar{background:var(--deep);border-radius:100px;height:3px;overflow:hidden;margin-top:8px}
+.kc-fill{height:100%;border-radius:100px;transition:width 1.2s cubic-bezier(.4,0,.2,1)}
+.kc-pct{font-family:var(--f-mono);font-size:8px;text-align:right;margin-top:3px}
+.ac .kc-v,.ac .kc-pct{color:var(--cyan)} .ac::after{background:linear-gradient(90deg,var(--cyan),transparent)} .ac .kc-fill{background:var(--cyan)}
+.ag .kc-v,.ag .kc-pct{color:var(--gold)} .ag::after{background:linear-gradient(90deg,var(--gold),transparent)} .ag .kc-fill{background:var(--gold)}
+.ab .kc-v,.ab .kc-pct{color:var(--blue)} .ab::after{background:linear-gradient(90deg,var(--blue),transparent)} .ab .kc-fill{background:var(--blue)}
+.ar .kc-v,.ar .kc-pct{color:var(--red)} .ar::after{background:linear-gradient(90deg,var(--red),transparent)} .ar .kc-fill{background:var(--red)}
+.av .kc-v,.av .kc-pct{color:var(--violet)} .av::after{background:linear-gradient(90deg,var(--violet),transparent)} .av .kc-fill{background:var(--violet)}
+.ao .kc-v,.ao .kc-pct{color:var(--orange)} .ao::after{background:linear-gradient(90deg,var(--orange),transparent)} .ao .kc-fill{background:var(--orange)}
+.al .kc-v,.al .kc-pct{color:var(--lime)} .al::after{background:linear-gradient(90deg,var(--lime),transparent)} .al .kc-fill{background:var(--lime)}
+
+/* PANEL */
+.panel{background:var(--s1);border:1px solid var(--e1);border-radius:11px;padding:14px 16px}
+.ph{font-family:var(--f-mono);font-size:8px;color:var(--fog);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
+
+/* FUNNEL */
+.fn-row{display:grid;grid-template-columns:108px 1fr 50px;gap:8px;align-items:center;padding:2px 0}
+.fn-lbl{font-family:var(--f-mono);font-size:8px;color:var(--mist);text-align:right}
+.fn-track{background:var(--deep);border-radius:5px;height:22px;overflow:hidden}
+.fn-fill{height:100%;border-radius:5px;display:flex;align-items:center;padding-left:8px;font-family:var(--f-mono);font-size:9px;font-weight:500;color:rgba(0,0,0,.85);white-space:nowrap;min-width:48px}
+.fn-num{font-family:var(--f-mono);font-size:9px;font-weight:500;text-align:right}
+.fn-mid{font-family:var(--f-mono);font-size:7px;color:var(--fog);text-align:center;padding:1px 0 1px 116px;letter-spacing:1px}
+
+/* ═══════ BIG PROGRESS BARS ══════════════════════════════ */
+.big-prog-wrap{background:var(--s1);border:1px solid var(--e1);border-radius:14px;padding:20px 24px;margin-bottom:10px;position:relative;overflow:hidden}
+.big-prog-wrap::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.bpw-cyan::before{background:linear-gradient(90deg,var(--cyan),transparent)}
+.bpw-gold::before{background:linear-gradient(90deg,var(--gold),transparent)}
+.bpw-violet::before{background:linear-gradient(90deg,var(--violet),transparent)}
+.bpw-blue::before{background:linear-gradient(90deg,var(--blue),transparent)}
+.bp-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.bp-title{font-family:var(--f-display);font-size:22px;letter-spacing:2px}
+.bp-subtitle{font-family:var(--f-mono);font-size:8px;color:var(--fog);letter-spacing:1.5px;text-transform:uppercase;margin-top:2px}
+.bp-earned{font-family:var(--f-display);font-size:36px;letter-spacing:1px}
+.bp-target{font-family:var(--f-mono);font-size:9px;color:var(--fog);text-align:right;margin-top:3px}
+.big-bar-track{background:var(--deep);border-radius:100px;height:18px;overflow:hidden;position:relative;margin-bottom:8px}
+.big-bar-fill{height:100%;border-radius:100px;transition:width 1s ease;position:relative;display:flex;align-items:center;justify-content:flex-end;padding-right:10px}
+.big-bar-pct{font-family:var(--f-mono);font-size:10px;font-weight:700;color:#000;position:relative;z-index:1}
+.big-bar-glow{position:absolute;top:0;right:0;bottom:0;width:40px;filter:blur(10px);opacity:.6}
+.bp-footer{display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:8px;color:var(--fog)}
+.bp-footer b{color:var(--mist)}
+
+/* BONUS BADGE */
+.bonus-badge{
+  display:none;position:absolute;top:12px;right:80px;
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  color:#000;font-family:var(--f-display);font-size:16px;letter-spacing:2px;
+  padding:6px 16px;border-radius:8px;
+  box-shadow:0 0 30px rgba(255,192,67,.6);
+  animation:bonusPop .4s cubic-bezier(.34,1.56,.64,1);
+  z-index:10;
 }
-
-/* ─── AMBIENT BACKGROUND ────────────────────────────── */
-.bg-glow {
-  position: fixed; inset: 0; pointer-events: none; z-index: 0;
-  background:
-    radial-gradient(ellipse 60% 40% at 20% 0%, rgba(0,212,170,0.055) 0%, transparent 70%),
-    radial-gradient(ellipse 40% 30% at 80% 100%, rgba(74,158,255,0.04) 0%, transparent 70%);
-}
-
-.grid-overlay {
-  position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.025;
-  background-image:
-    linear-gradient(var(--teal) 1px, transparent 1px),
-    linear-gradient(90deg, var(--teal) 1px, transparent 1px);
-  background-size: 40px 40px;
-}
-
-/* ─── LAYOUT ─────────────────────────────────────────── */
-.page {
-  position: relative; z-index: 1;
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 32px 20px 60px;
-}
-
-/* ─── TOP NAV ────────────────────────────────────────── */
-.topnav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 36px;
-  flex-wrap: wrap;
-  gap: 16px;
-}
-
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.brand-icon {
-  width: 42px; height: 42px;
-  background: linear-gradient(135deg, var(--teal), var(--teal2));
-  border-radius: 10px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 20px;
-  box-shadow: 0 0 20px rgba(0,212,170,0.3);
-}
-
-.brand-text h1 {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 26px;
-  letter-spacing: 3px;
-  color: var(--text);
-  line-height: 1;
-}
-
-.brand-text p {
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  color: var(--muted);
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  margin-top: 3px;
-}
-
-.clock-block { text-align: right; }
-
-.clock-block .time {
-  font-family: 'DM Mono', monospace;
-  font-size: 32px;
-  font-weight: 500;
-  color: var(--teal);
-  letter-spacing: 3px;
-  line-height: 1;
-}
-
-.clock-block .date {
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  color: var(--muted);
-  letter-spacing: 1px;
-  margin-top: 4px;
-}
-
-/* ─── SETTINGS PANEL ─────────────────────────────────── */
-.settings-toggle {
-  background: var(--surf);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 10px 18px;
-  color: var(--sub);
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transition: border-color 0.2s, color 0.2s;
-  margin-bottom: 16px;
-  width: fit-content;
-}
-.settings-toggle:hover { border-color: var(--teal); color: var(--teal); }
-.settings-toggle .arrow { transition: transform 0.3s; display: inline-block; }
-.settings-toggle.open .arrow { transform: rotate(180deg); }
-
-.settings-panel {
-  background: var(--surf);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 20px 24px 24px;
-  margin-bottom: 28px;
-  display: none;
-  animation: fadeSlide 0.2s ease;
-}
-
-.settings-panel.visible { display: block; }
-
-@keyframes fadeSlide {
-  from { opacity: 0; transform: translateY(-8px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-.settings-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 16px;
-  margin-bottom: 18px;
-}
-
-.field label {
-  display: block;
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  color: var(--muted);
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  margin-bottom: 7px;
-}
-
-.field input {
-  width: 100%;
-  background: var(--bg);
-  border: 1px solid var(--dim);
-  border-radius: 8px;
-  padding: 10px 13px;
-  color: var(--text);
-  font-family: 'DM Mono', monospace;
-  font-size: 14px;
-  outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.field input:focus {
-  border-color: var(--teal);
-  box-shadow: 0 0 0 3px rgba(0,212,170,0.08);
-}
-
-.settings-actions { display: flex; gap: 10px; flex-wrap: wrap; }
-
-.btn-save {
-  background: var(--teal);
-  color: #000;
-  border: none;
-  border-radius: 8px;
-  padding: 11px 28px;
-  font-family: 'Sora', sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  letter-spacing: 0.3px;
-  transition: opacity 0.2s, transform 0.1s;
-}
-.btn-save:hover { opacity: 0.88; }
-.btn-save:active { transform: scale(0.97); }
-
-.btn-reset {
-  background: transparent;
-  color: var(--muted);
-  border: 1px solid var(--border2);
-  border-radius: 8px;
-  padding: 11px 20px;
-  font-family: 'Sora', sans-serif;
-  font-size: 13px;
-  cursor: pointer;
-  transition: border-color 0.2s, color 0.2s;
-}
-.btn-reset:hover { border-color: var(--red); color: var(--red); }
-
-.save-msg {
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  color: var(--teal);
-  align-self: center;
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-.save-msg.show { opacity: 1; }
-
-/* ─── HERO CARD ──────────────────────────────────────── */
-.hero {
-  background: var(--surf);
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 32px 36px;
-  margin-bottom: 20px;
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 24px;
-  align-items: center;
-  position: relative;
-  overflow: hidden;
-  transition: border-color 0.4s;
-}
-
-.hero.live { border-color: rgba(0,212,170,0.35); }
-
-.hero::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, var(--teal), rgba(0,212,170,0.2), transparent);
-  opacity: 0;
-  transition: opacity 0.4s;
-}
-.hero.live::before { opacity: 1; }
-
-.hero-eyebrow {
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  color: var(--muted);
-  letter-spacing: 2.5px;
-  text-transform: uppercase;
-  margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.live-dot {
-  width: 7px; height: 7px;
-  border-radius: 50%;
-  background: var(--teal);
-  animation: blink 1.2s step-end infinite;
-}
-
-@keyframes blink { 50% { opacity: 0; } }
-
-.hero-amount {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 80px;
-  letter-spacing: 2px;
-  color: var(--teal);
-  line-height: 0.95;
-  transition: color 0.3s;
-}
-
-.hero-sub {
-  font-family: 'DM Mono', monospace;
-  font-size: 12px;
-  color: var(--sub);
-  margin-top: 10px;
-}
-
-.hero-sub span { color: var(--text); }
-
-.hero-right {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 12px;
-}
-
-.stat-chip {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 14px 20px;
-  text-align: center;
-  min-width: 130px;
-}
-
-.stat-chip .sc-val {
-  font-family: 'DM Mono', monospace;
-  font-size: 22px;
-  font-weight: 500;
-  color: var(--gold);
-  letter-spacing: 1px;
-}
-
-.stat-chip .sc-lbl {
-  font-size: 10px;
-  color: var(--muted);
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  margin-top: 3px;
-}
-
-.rate-pill {
-  font-family: 'DM Mono', monospace;
-  font-size: 12px;
-  color: var(--sub);
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 6px 14px;
-}
-.rate-pill span { color: var(--teal); }
-
-/* ─── GOAL CARDS ─────────────────────────────────────── */
-.goals-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-  margin-bottom: 20px;
-}
-
-.goal-card {
-  background: var(--surf);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 22px 22px 18px;
-  position: relative;
-  overflow: hidden;
-  transition: border-color 0.3s, transform 0.2s;
-}
-
-.goal-card:hover { transform: translateY(-2px); border-color: var(--border2); }
-
-.goal-card::after {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0; height: 2px;
-}
-
-.goal-card.monthly::after  { background: linear-gradient(90deg, var(--blue), transparent); }
-.goal-card.quarterly::after{ background: linear-gradient(90deg, var(--gold), transparent); }
-.goal-card.yearly::after   { background: linear-gradient(90deg, var(--red), transparent); }
-
-.gc-label {
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  margin-bottom: 14px;
-}
-
-.goal-card.monthly  .gc-label { color: var(--blue); }
-.goal-card.quarterly .gc-label { color: var(--gold); }
-.goal-card.yearly   .gc-label { color: var(--red); }
-
-.gc-earned {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 42px;
-  letter-spacing: 1px;
-  line-height: 1;
-  margin-bottom: 5px;
-}
-
-.goal-card.monthly  .gc-earned { color: var(--blue); }
-.goal-card.quarterly .gc-earned { color: var(--gold); }
-.goal-card.yearly   .gc-earned { color: var(--red); }
-
-.gc-remaining {
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  color: var(--muted);
-  margin-bottom: 16px;
-}
-
-.gc-remaining span { color: var(--sub); }
-
-.progress-track {
-  background: var(--dim);
-  border-radius: 100px;
-  height: 4px;
-  overflow: visible;
-  margin-bottom: 8px;
-  position: relative;
-}
-
-.progress-fill {
-  height: 100%;
-  border-radius: 100px;
-  transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-}
-
-.progress-fill::after {
-  content: '';
-  position: absolute;
-  right: -1px; top: 50%;
-  transform: translateY(-50%);
-  width: 10px; height: 10px;
-  border-radius: 50%;
-  background: inherit;
-  box-shadow: 0 0 8px currentColor;
-}
-
-.goal-card.monthly  .progress-fill { background: var(--blue); }
-.goal-card.quarterly .progress-fill { background: var(--gold); }
-.goal-card.yearly   .progress-fill { background: var(--red); }
-
-.gc-pct {
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  color: var(--muted);
-  text-align: right;
-}
-
-/* ─── STATS STRIP ────────────────────────────────────── */
-.stats-strip {
-  background: var(--surf);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 18px 24px;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0;
-  margin-bottom: 20px;
-}
-
-.ss-item {
-  padding: 4px 20px;
-  border-right: 1px solid var(--border);
-}
-
-.ss-item:first-child { padding-left: 0; }
-.ss-item:last-child  { border-right: none; }
-
-.ss-lbl {
-  font-family: 'DM Mono', monospace;
-  font-size: 9px;
-  color: var(--muted);
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  margin-bottom: 6px;
-}
-
-.ss-val {
-  font-family: 'DM Mono', monospace;
-  font-size: 16px;
-  font-weight: 500;
-  color: var(--text);
-}
-
-.ss-val.teal  { color: var(--teal); }
-.ss-val.gold  { color: var(--gold); }
-.ss-val.green { color: #4ADE80; }
-
-/* ─── DAYS LEFT ROW ──────────────────────────────────── */
-.days-row {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-  margin-bottom: 20px;
-}
-
-.day-card {
-  background: var(--surf);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 16px 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.day-card .dc-lbl {
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  color: var(--muted);
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-}
-
-.day-card .dc-val {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 28px;
-  letter-spacing: 1px;
-}
-
-.day-card.month   .dc-val { color: var(--blue); }
-.day-card.quarter .dc-val { color: var(--gold); }
-.day-card.year    .dc-val { color: var(--red); }
-
-/* ─── FOOTER ─────────────────────────────────────────── */
-.footer {
-  text-align: center;
-  padding-top: 20px;
-  border-top: 1px solid var(--border);
-}
-
-.footer p {
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  color: var(--muted);
-  letter-spacing: 1px;
-}
-
-.footer a { color: var(--teal); text-decoration: none; }
-.footer a:hover { text-decoration: underline; }
-
-/* ─── RESPONSIVE ─────────────────────────────────────── */
-@media (max-width: 768px) {
-  .hero { grid-template-columns: 1fr; }
-  .hero-right { align-items: flex-start; flex-direction: row; flex-wrap: wrap; }
-  .hero-amount { font-size: 60px; }
-  .goals-grid { grid-template-columns: 1fr; }
-  .stats-strip { grid-template-columns: repeat(2, 1fr); }
-  .ss-item:nth-child(2) { border-right: none; }
-  .days-row { grid-template-columns: 1fr; }
-}
-
-@media (max-width: 480px) {
-  .hero-amount { font-size: 48px; }
-  .stats-strip { grid-template-columns: 1fr 1fr; }
-}
-
-/* ─── ENTER ANIMATIONS ───────────────────────────────── */
-.fade-in {
-  opacity: 0;
-  transform: translateY(16px);
-  animation: fadeIn 0.5s ease forwards;
-}
-
-.fade-in:nth-child(1) { animation-delay: 0.05s; }
-.fade-in:nth-child(2) { animation-delay: 0.1s; }
-.fade-in:nth-child(3) { animation-delay: 0.15s; }
-.fade-in:nth-child(4) { animation-delay: 0.2s; }
-.fade-in:nth-child(5) { animation-delay: 0.25s; }
-
-@keyframes fadeIn {
-  to { opacity: 1; transform: translateY(0); }
-}
+.bonus-badge.show{display:block}
+@keyframes bonusPop{from{transform:scale(0.5) rotate(-5deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
+
+/* TECH TRACKER */
+.tc{background:var(--card);border:1px solid var(--e1);border-radius:11px;padding:13px 14px;position:relative;overflow:hidden}
+.tc::before{content:'';position:absolute;top:0;left:0;bottom:0;width:3px;border-radius:3px 0 0 3px}
+.tj::before{background:var(--cyan)} .th::before{background:var(--violet)}
+.tc-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}
+.tc-name{font-weight:600;font-size:13px;font-family:var(--f-body)}
+.tj .tc-name{color:var(--cyan)} .th .tc-name{color:var(--violet)}
+.tc-amt{font-family:var(--f-display);font-size:22px;letter-spacing:1px}
+.tj .tc-amt{color:var(--cyan)} .th .tc-amt{color:var(--violet)}
+.mini{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:9px}
+.ms{background:var(--deep);border-radius:6px;padding:6px 8px;text-align:center}
+.ms-v{font-family:var(--f-mono);font-size:12px;font-weight:500;color:var(--snow)}
+.ms-l{font-family:var(--f-mono);font-size:6px;color:var(--fog);letter-spacing:1px;text-transform:uppercase;margin-top:2px}
+.tc-inp{display:flex;gap:5px;margin-bottom:7px;flex-wrap:wrap}
+.t-sel,.t-num{background:var(--bg);border:1px solid var(--e2);border-radius:6px;padding:6px 8px;color:var(--snow);font-family:var(--f-mono);font-size:10px;outline:none;transition:border-color .15s}
+.t-sel{flex:1.4;min-width:0} .t-num{flex:1;display:none;min-width:0}
+.t-sel:focus,.t-num:focus{border-color:var(--cyan)}
+.t-btn{border:none;border-radius:6px;padding:6px 11px;font-family:var(--f-body);font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;transition:opacity .15s,transform .1s}
+.t-btn:hover{opacity:.82;transform:scale(1.02)}
+.tj .t-btn{background:var(--cyan);color:#000} .th .t-btn{background:var(--violet);color:#fff}
+.tc-prog{background:var(--deep);border-radius:100px;height:3px;overflow:hidden}
+.tc-pbar{height:100%;border-radius:100px;transition:width .8s ease}
+.tj .tc-pbar{background:var(--cyan)} .th .tc-pbar{background:var(--violet)}
+.tc-foot{display:flex;justify-content:space-between;margin-top:4px;font-family:var(--f-mono);font-size:7px;color:var(--fog)}
+.combo-bar{height:8px;border-radius:100px;background:var(--deep);overflow:hidden;display:flex;margin:7px 0}
+.cb-j{background:var(--cyan);height:100%;transition:width .8s ease}
+.cb-h{background:var(--violet);height:100%;transition:width .8s ease}
+.leg{display:flex;gap:12px;flex-wrap:wrap}
+.li{display:flex;align-items:center;gap:4px;font-family:var(--f-mono);font-size:9px;color:var(--mist)}
+.lid{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.mini4{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:9px}
+
+/* JOB LOG */
+.jlog{display:flex;flex-direction:column;gap:4px;max-height:250px;overflow-y:auto}
+.jlog::-webkit-scrollbar{width:3px}
+.jlog::-webkit-scrollbar-track{background:var(--deep)}
+.jlog::-webkit-scrollbar-thumb{background:var(--e2);border-radius:2px}
+.je{background:var(--bg);border:1px solid var(--e1);border-radius:6px;padding:5px 9px;display:flex;align-items:center;gap:5px;font-family:var(--f-mono);font-size:9px}
+.je-n{font-weight:500;flex-shrink:0}
+.je-b{font-size:6px;padding:1px 5px;border-radius:3px;flex-shrink:0}
+.jer{background:rgba(0,245,196,.12);color:var(--cyan)}
+.jep{background:rgba(255,192,67,.12);color:var(--gold)}
+.je-a{font-weight:600;color:var(--snow);margin-left:auto}
+.je-t{color:var(--fog);flex-shrink:0}
+.je-x{background:none;border:none;color:var(--fog);cursor:pointer;font-size:11px;transition:color .15s;flex-shrink:0}
+.je-x:hover{color:var(--red)}
+.jlog-empty{font-family:var(--f-mono);font-size:9px;color:var(--fog);text-align:center;padding:26px 0}
+
+/* MARKETING CHANNELS */
+.mc{background:var(--s2);border:1px solid var(--e1);border-radius:10px;padding:11px 12px;position:relative;overflow:hidden}
+.mc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.mc-ppc::before{background:linear-gradient(90deg,#EA4335,#FBBC04)}
+.mc-lsa::before{background:linear-gradient(90deg,#4285F4,#34A853)}
+.mc-agg::before{background:linear-gradient(90deg,#FF6B2B,transparent)}
+.mc-gbp::before{background:linear-gradient(90deg,#34A853,transparent)}
+.mc-seo::before{background:linear-gradient(90deg,#8B5CF6,transparent)}
+.mc-social::before{background:linear-gradient(90deg,#E1306C,transparent)}
+.mc-grass::before{background:linear-gradient(90deg,#F59E0B,transparent)}
+.mc-mail::before{background:linear-gradient(90deg,#06B6D4,transparent)}
+.mc-comm::before{background:linear-gradient(90deg,#10B981,transparent)}
+.mc-net::before{background:linear-gradient(90deg,#6366F1,transparent)}
+.mc-ch{font-family:var(--f-mono);font-size:7px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px}
+.mc-ppc .mc-ch{color:#EA4335} .mc-lsa .mc-ch{color:#4285F4}
+.mc-agg .mc-ch{color:#FF6B2B} .mc-gbp .mc-ch{color:#34A853}
+.mc-seo .mc-ch{color:#8B5CF6} .mc-social .mc-ch{color:#E1306C}
+.mc-grass .mc-ch{color:#F59E0B} .mc-mail .mc-ch{color:#06B6D4}
+.mc-comm .mc-ch{color:#10B981} .mc-net .mc-ch{color:#6366F1}
+.mc-budget{font-family:var(--f-mono);font-size:7px;color:var(--fog);margin-bottom:3px}
+.mc-rv{font-family:var(--f-display);font-size:20px;letter-spacing:1px;color:var(--snow);line-height:1;margin-bottom:2px}
+.mc-roi{font-family:var(--f-mono);font-size:8px;margin-bottom:6px}
+.roi-p{color:var(--lime)} .roi-n{color:var(--red)} .roi-u{color:var(--fog)}
+.mc-fi{display:flex;flex-direction:column;gap:3px}
+.fi{display:flex;align-items:center;gap:4px}
+.fi label{font-family:var(--f-mono);font-size:6px;color:var(--fog);letter-spacing:1px;text-transform:uppercase;width:42px;flex-shrink:0}
+.fi input{flex:1;background:var(--bg);border:1px solid var(--e2);border-radius:5px;padding:4px 7px;color:var(--snow);font-family:var(--f-mono);font-size:9px;outline:none;transition:border-color .15s;min-width:0}
+.fi input:focus{border-color:var(--cyan)}
+
+/* MKT SUMMARY */
+.msum{display:grid;grid-template-columns:repeat(5,1fr);gap:0;background:var(--s1);border:1px solid var(--e1);border-radius:9px;padding:10px 16px;margin-bottom:10px}
+.mi{padding:0 11px;border-right:1px solid var(--e1);text-align:center}
+.mi:first-child{padding-left:0;text-align:left}.mi:last-child{border-right:none;text-align:right}
+.mi-l{font-family:var(--f-mono);font-size:6px;color:var(--fog);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:3px}
+.mi-v{font-family:var(--f-display);font-size:18px;letter-spacing:1px}
+.mc-txt{color:var(--cyan)} .mg-txt{color:var(--gold)} .mr-txt{color:var(--red)} .ml-txt{color:var(--lime)}
+
+/* SETTINGS */
+.stg-btn{background:var(--s1);border:1px solid var(--e1);border-radius:8px;padding:6px 12px;color:var(--mist);font-family:var(--f-mono);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:5px;transition:border-color .2s,color .2s;margin-bottom:9px;width:fit-content}
+.stg-btn:hover{border-color:var(--cyan);color:var(--cyan)}
+.stg-arr{display:inline-block;transition:transform .22s}
+.stg-btn.open .stg-arr{transform:rotate(180deg)}
+.stg-panel{display:none;background:var(--s1);border:1px solid var(--e1);border-radius:11px;padding:14px 16px 16px;margin-bottom:12px}
+.stg-panel.open{display:block}
+.sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-bottom:10px}
+.sf label{display:block;font-family:var(--f-mono);font-size:7px;color:var(--fog);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px}
+.sf input{width:100%;background:var(--bg);border:1px solid var(--e2);border-radius:6px;padding:7px 9px;color:var(--snow);font-family:var(--f-mono);font-size:11px;outline:none;transition:border-color .15s}
+.sf input:focus{border-color:var(--cyan)}
+.brow{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+.bp-btn{background:var(--cyan);color:#000;border:none;border-radius:6px;padding:7px 16px;font-family:var(--f-body);font-size:12px;font-weight:700;cursor:pointer;transition:opacity .15s}
+.bp-btn:hover{opacity:.85}
+.bg-btn{background:transparent;color:var(--mist);border:1px solid var(--e2);border-radius:6px;padding:7px 12px;font-family:var(--f-body);font-size:12px;cursor:pointer;transition:border-color .15s,color .15s}
+.bg-btn:hover{border-color:var(--red);color:var(--red)}
+.bg-sm{padding:4px 9px;font-size:10px}
+.flash{font-family:var(--f-mono);font-size:8px;color:var(--cyan);opacity:0;transition:opacity .3s}
+.flash.show{opacity:1}
+
+/* 30-60-90 KPI SECTION */
+.period-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px}
+.period-card{background:var(--s1);border:1px solid var(--e1);border-radius:12px;overflow:hidden;position:relative}
+.period-header{padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+.period-title{font-family:var(--f-display);font-size:20px;letter-spacing:2px}
+.period-sub{font-family:var(--f-mono);font-size:7px;color:rgba(0,0,0,.6);text-transform:uppercase;letter-spacing:1.5px;margin-top:1px}
+.p30 .period-header{background:linear-gradient(135deg,#00C49A,#00F5C4)}
+.p60 .period-header{background:linear-gradient(135deg,#1A7AE0,#4AA8FF)}
+.p90 .period-header{background:linear-gradient(135deg,#8A30D8,#C06AFF)}
+.period-header .period-title{color:#000}
+.period-header .period-sub{color:rgba(0,0,0,.55)}
+.period-rev{font-family:var(--f-display);font-size:26px;color:#000;letter-spacing:1px}
+.period-body{padding:12px 16px}
+.pk{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--e1)}
+.pk:last-child{border-bottom:none}
+.pk-l{font-family:var(--f-mono);font-size:7.5px;color:var(--fog);letter-spacing:.5px}
+.pk-v{font-family:var(--f-mono);font-size:10px;font-weight:600;color:var(--snow)}
+.pk-v.cyan{color:var(--cyan)} .pk-v.gold{color:var(--gold)} .pk-v.lime{color:var(--lime)}
+
+/* MONTHLY KPI ROWS */
+.monthly-kpi-row{display:grid;grid-template-columns:140px 1fr 1fr 1fr 1fr 1fr;gap:0;background:var(--s1);border:1px solid var(--e1);border-radius:9px;overflow:hidden;margin-bottom:6px}
+.mkr-label{padding:10px 14px;background:var(--s2);border-right:1px solid var(--e1);display:flex;flex-direction:column;justify-content:center}
+.mkr-label-t{font-family:var(--f-mono);font-size:7px;color:var(--fog);letter-spacing:1.5px;text-transform:uppercase}
+.mkr-label-v{font-family:var(--f-display);font-size:18px;margin-top:3px}
+.mkr-cell{padding:8px 10px;border-right:1px solid var(--e1);text-align:center}
+.mkr-cell:last-child{border-right:none}
+.mkr-month{font-family:var(--f-mono);font-size:7px;color:var(--fog);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+.mkr-val{font-family:var(--f-mono);font-size:10px;font-weight:600;color:var(--snow)}
+.mkr-sub{font-family:var(--f-mono);font-size:7px;color:var(--fog);margin-top:2px}
+.month-header{display:grid;grid-template-columns:140px 1fr 1fr 1fr 1fr 1fr;gap:0;padding:6px 0;margin-bottom:4px}
+.mh-blank{width:140px}
+.mh-cell{text-align:center;font-family:var(--f-mono);font-size:8px;color:var(--mist);letter-spacing:1px;text-transform:uppercase;font-weight:600}
+
+/* COMPETITOR */
+.comp-card{background:var(--s2);border:1px solid var(--e1);border-radius:11px;padding:14px 16px;position:relative;overflow:hidden}
+.comp-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.comp1::before{background:linear-gradient(90deg,var(--red),transparent)}
+.comp2::before{background:linear-gradient(90deg,var(--orange),transparent)}
+.comp3::before{background:linear-gradient(90deg,var(--gold),transparent)}
+.comp4::before{background:linear-gradient(90deg,var(--blue),transparent)}
+.comp5::before{background:linear-gradient(90deg,var(--violet),transparent)}
+.comp-rank{font-family:var(--f-display);font-size:38px;color:var(--deep);position:absolute;top:8px;right:12px;line-height:1;user-select:none}
+.comp-name{font-size:12px;font-weight:700;color:var(--snow);margin-bottom:3px;font-family:var(--f-body);letter-spacing:.5px}
+.comp-area{font-family:var(--f-mono);font-size:7px;color:var(--fog);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
+.comp-rev{font-family:var(--f-display);font-size:28px;letter-spacing:1px;margin-bottom:2px}
+.comp1 .comp-rev{color:var(--red)} .comp2 .comp-rev{color:var(--orange)} .comp3 .comp-rev{color:var(--gold)} .comp4 .comp-rev{color:var(--blue)} .comp5 .comp-rev{color:var(--violet)}
+.comp-label{font-family:var(--f-mono);font-size:7px;color:var(--fog);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
+.comp-stats{display:flex;flex-direction:column;gap:3px}
+.comp-stat{display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:8px}
+.cs-l{color:var(--fog)} .cs-v{color:var(--mist);font-weight:500}
+.comp-threat{display:inline-block;font-family:var(--f-mono);font-size:7px;letter-spacing:1px;text-transform:uppercase;padding:2px 8px;border-radius:3px;margin-top:6px}
+.threat-h{background:rgba(255,68,102,.15);color:var(--red);border:1px solid rgba(255,68,102,.3)}
+.threat-m{background:rgba(255,192,67,.12);color:var(--gold);border:1px solid rgba(255,192,67,.25)}
+.comp-bar-wrap{margin-top:8px}
+.comp-bar-lbl{font-family:var(--f-mono);font-size:7px;color:var(--fog);display:flex;justify-content:space-between;margin-bottom:3px}
+.comp-bar-track{background:var(--deep);border-radius:100px;height:4px;overflow:hidden}
+.comp-bar-fill{height:100%;border-radius:100px;transition:width 1.2s ease}
+.comp1 .comp-bar-fill{background:var(--red)} .comp2 .comp-bar-fill{background:var(--orange)} .comp3 .comp-bar-fill{background:var(--gold)} .comp4 .comp-bar-fill{background:var(--blue)} .comp5 .comp-bar-fill{background:var(--violet)}
+
+.msr{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--e1)}
+.msr:last-child{border-bottom:none}
+.msr-l{font-family:var(--f-mono);font-size:8px;color:var(--fog)}
+.msr-v{font-family:var(--f-mono);font-size:9px;font-weight:500;color:var(--snow)}
+
+.donut-wrap{position:relative;width:86px;height:86px;flex-shrink:0}
+.donut-wrap svg{transform:rotate(-90deg)}
+.donut-mid{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.donut-v{font-family:var(--f-display);font-size:15px;color:var(--cyan);line-height:1}
+.donut-l{font-family:var(--f-mono);font-size:6px;color:var(--fog);letter-spacing:1px}
+
+/* SIMULATE BUTTON */
+.sim-btn{background:linear-gradient(135deg,var(--violet),var(--violet2));color:#fff;border:none;border-radius:8px;padding:8px 16px;font-family:var(--f-body);font-size:12px;font-weight:700;cursor:pointer;transition:opacity .15s,transform .1s;letter-spacing:.5px}
+.sim-btn:hover{opacity:.85;transform:scale(1.02)}
+.sim-btn-cyan{background:linear-gradient(135deg,var(--cyan),var(--cyan2));color:#000}
+
+/* NOTIFICATION */
+.notif{position:fixed;top:20px;right:20px;z-index:1000;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.notif-item{background:linear-gradient(135deg,#1a2e44,#0f1e30);border:1px solid;border-radius:10px;padding:12px 18px;font-family:var(--f-mono);font-size:11px;max-width:320px;animation:slideIn .4s cubic-bezier(.34,1.56,.64,1);pointer-events:auto;position:relative;overflow:hidden}
+.notif-item::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.notif-bonus{border-color:rgba(255,192,67,.5);color:var(--gold)}
+.notif-bonus::before{background:linear-gradient(90deg,var(--gold),transparent)}
+.notif-cyan{border-color:rgba(0,245,196,.5);color:var(--cyan)}
+.notif-cyan::before{background:linear-gradient(90deg,var(--cyan),transparent)}
+.notif-out{animation:slideOut .3s ease forwards}
+@keyframes slideIn{from{transform:translateX(120%);opacity:0}to{transform:translateX(0);opacity:1}}
+@keyframes slideOut{to{transform:translateX(120%);opacity:0}}
+.notif-title{font-weight:700;font-size:12px;margin-bottom:3px}
+.notif-body{font-size:9px;color:var(--mist);letter-spacing:.5px}
+
+@media(max-width:1100px){.g6,.g7{grid-template-columns:repeat(3,1fr)}.g5{grid-template-columns:repeat(3,1fr)}.period-grid{grid-template-columns:1fr}}
+@media(max-width:800px){.g4{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:1fr 1fr}.g2{grid-template-columns:1fr}.msum{grid-template-columns:repeat(2,1fr)}.ticker{flex-wrap:wrap}.tik{border-right:none;padding:4px 0;min-width:40%}}
+
+/* ACTUAL INPUT ROWS */
+.monthly-kpi-row.actual-row{background:rgba(0,245,196,.03);border-color:rgba(0,245,196,.15)}
+.actual-row .mkr-label{background:rgba(0,245,196,.06)}
+.actual-row .mkr-label-t{color:var(--cyan)}
+.actual-row .mkr-label-v{color:var(--cyan);font-size:14px}
+.actual-input{width:100%;background:var(--bg);border:1px solid var(--e2);border-radius:5px;padding:4px 6px;color:var(--snow);font-family:var(--f-mono);font-size:10px;outline:none;transition:border-color .15s;text-align:center}
+.actual-input:focus{border-color:var(--cyan)}
+.vs-target{font-family:var(--f-mono);font-size:7px;margin-top:3px;text-align:center}
+.vs-good{color:var(--lime)} .vs-behind{color:var(--red)} .vs-neutral{color:var(--fog)}
 </style>
 </head>
-
 <body>
-<div class="bg-glow"></div>
-<div class="grid-overlay"></div>
+<div class="bg-wrap bg-glow"></div>
+<div class="bg-wrap bg-grid"></div>
+<div class="bg-wrap bg-scan"></div>
+<div class="notif" id="notifContainer"></div>
 
 <div class="page">
 
-  <!-- ── TOP NAV ── -->
-  <div class="topnav fade-in">
-    <div class="brand">
-      <div class="brand-icon">📈</div>
-      <div class="brand-text">
-        <h1>REVENUE TRACKER</h1>
-        <p>30 · 60 · 90 Day Plan</p>
+<!-- TOP NAV -->
+<div class="topnav">
+  <div class="brand">
+    <div class="brand-logo">❄</div>
+    <div>
+      <div class="brand-name">HVAC Command Center</div>
+      <div class="brand-sub">Fuquay-Varina · Angier · Holly Springs, NC · Sure Start Franchise</div>
+    </div>
+  </div>
+  <div class="nav-pills">
+    <div class="pill pill-live"><span class="pulsedot"></span>Live</div>
+    <div class="pill pill-gold">Opens Apr 27, 2026</div>
+    <div class="pill">Goal: $1.2M</div>
+    <div class="pill">2 Trucks · 2 Techs</div>
+    <div class="pill">Market Share: 9.7%</div>
+  </div>
+  <div class="nav-clock">
+    <div class="clockface" id="clock">00:00:00</div>
+    <div class="clockdate" id="cdate">—</div>
+  </div>
+</div>
+
+<!-- SETTINGS -->
+<button class="stg-btn" id="stgBtn" onclick="toggleStg()">⚙ Settings <span class="stg-arr">▼</span></button>
+<div class="stg-panel" id="stgPanel">
+  <div class="sg">
+    <div class="sf"><label>Daily Target ($)</label><input type="number" id="sD" placeholder="3333"></div>
+    <div class="sf"><label>Monthly Target ($)</label><input type="number" id="sM" placeholder="100000"></div>
+    <div class="sf"><label>Annual Target ($)</label><input type="number" id="sA" placeholder="1200000"></div>
+    <div class="sf"><label>Joe Monthly Target ($)</label><input type="number" id="sJ" placeholder="50000"></div>
+    <div class="sf"><label>Harry Monthly Target ($)</label><input type="number" id="sH" placeholder="50000"></div>
+    <div class="sf"><label>Work Start (24h)</label><input type="time" id="sWS"></div>
+    <div class="sf"><label>Work End (24h)</label><input type="time" id="sWE"></div>
+  </div>
+  <div class="brow">
+    <button class="bp-btn" onclick="saveStg()">💾 Save Settings</button>
+    <button class="bg-btn" onclick="resetStg()">Reset</button>
+    <span class="flash" id="flash">✓ Saved</span>
+  </div>
+</div>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="tik"><div class="tik-v" id="tkToday" style="color:var(--cyan)">$0</div><div class="tik-l">Today Earned</div></div>
+  <div class="tik"><div class="tik-v" id="tkLeft" style="color:var(--gold)">$0</div><div class="tik-l">Today Remaining</div></div>
+  <div class="tik"><div class="tik-v" id="tkRate" style="color:var(--blue)">$0/hr</div><div class="tik-l">Earning Rate</div></div>
+  <div class="tik"><div class="tik-v" id="tkStatus">—</div><div class="tik-l">Track Status</div></div>
+</div>
+
+<!-- ████ SECTION 1: 30-60-90 DAY KPIs ████ -->
+<div class="sec-hdr open" onclick="toggleSec('kpi3090B',this)" style="margin-top:0">
+  <div class="sec-l">
+    <div class="sec-dot" style="background:var(--cyan)"></div>
+    <span class="sec-ttl">30 · 60 · 90 Day KPI Targets</span>
+    <span class="sec-badge">Revenue · Repairs · Replacements · Marketing Spend per Period</span>
+  </div>
+  <span class="sec-arr">▲</span>
+</div>
+<div class="sec-body open" id="kpi3090B">
+  <div class="period-grid">
+    <!-- 30 DAYS -->
+    <div class="period-card p30">
+      <div class="period-header">
+        <div>
+          <div class="period-title">30 Days</div>
+          <div class="period-sub">May 2026 · Ramp Up</div>
+        </div>
+        <div class="period-rev">$60K</div>
+      </div>
+      <div class="period-body">
+        <div class="pk"><span class="pk-l">Revenue Target</span><span class="pk-v cyan">$60,000</span></div>
+        <div class="pk"><span class="pk-l">Repair Jobs Needed</span><span class="pk-v">~30 jobs</span></div>
+        <div class="pk"><span class="pk-l">Repair Revenue</span><span class="pk-v">$12,000</span></div>
+        <div class="pk"><span class="pk-l">Replacement Jobs Needed</span><span class="pk-v gold">~4 jobs</span></div>
+        <div class="pk"><span class="pk-l">Replacement Revenue</span><span class="pk-v gold">$46,000</span></div>
+        <div class="pk"><span class="pk-l">Daily Appointments</span><span class="pk-v">~2.0/day</span></div>
+        <div class="pk"><span class="pk-l">Daily Replace Pace</span><span class="pk-v">~0.19/day</span></div>
+        <div class="pk"><span class="pk-l">Inbound Calls Needed</span><span class="pk-v">~54/mo</span></div>
+        <div class="pk"><span class="pk-l">Marketing Spend</span><span class="pk-v">$4,954</span></div>
+        <div class="pk"><span class="pk-l">Team: Joe Target</span><span class="pk-v cyan">$30,000</span></div>
+        <div class="pk"><span class="pk-l">Team: Harry Target</span><span class="pk-v">$30,000</span></div>
+        <div class="pk"><span class="pk-l">Top Channel</span><span class="pk-v">LSA $1,824</span></div>
       </div>
     </div>
-    <div class="clock-block">
-      <div class="time" id="clock">00:00:00</div>
-      <div class="date" id="dateLine">—</div>
+    <!-- 60 DAYS -->
+    <div class="period-card p60">
+      <div class="period-header">
+        <div>
+          <div class="period-title">60 Days</div>
+          <div class="period-sub">June 2026 · Building</div>
+        </div>
+        <div class="period-rev">$78K</div>
+      </div>
+      <div class="period-body">
+        <div class="pk"><span class="pk-l">Revenue Target</span><span class="pk-v" style="color:var(--blue)">$78,000</span></div>
+        <div class="pk"><span class="pk-l">Repair Jobs Needed</span><span class="pk-v">~39 jobs</span></div>
+        <div class="pk"><span class="pk-l">Repair Revenue</span><span class="pk-v">$15,600</span></div>
+        <div class="pk"><span class="pk-l">Replacement Jobs Needed</span><span class="pk-v gold">~5 jobs</span></div>
+        <div class="pk"><span class="pk-l">Replacement Revenue</span><span class="pk-v gold">$57,500</span></div>
+        <div class="pk"><span class="pk-l">Daily Appointments</span><span class="pk-v">~2.6/day</span></div>
+        <div class="pk"><span class="pk-l">Daily Replace Pace</span><span class="pk-v">~0.25/day</span></div>
+        <div class="pk"><span class="pk-l">Inbound Calls Needed</span><span class="pk-v">~70/mo</span></div>
+        <div class="pk"><span class="pk-l">Marketing Spend</span><span class="pk-v">$6,175</span></div>
+        <div class="pk"><span class="pk-l">Team: Joe Target</span><span class="pk-v" style="color:var(--blue)">$39,000</span></div>
+        <div class="pk"><span class="pk-l">Team: Harry Target</span><span class="pk-v">$39,000</span></div>
+        <div class="pk"><span class="pk-l">Top Channel</span><span class="pk-v">LSA $2,371</span></div>
+      </div>
+    </div>
+    <!-- 90 DAYS -->
+    <div class="period-card p90">
+      <div class="period-header">
+        <div>
+          <div class="period-title">90 Days</div>
+          <div class="period-sub">July 2026 · Stabilizing</div>
+        </div>
+        <div class="period-rev">$90K</div>
+      </div>
+      <div class="period-body">
+        <div class="pk"><span class="pk-l">Revenue Target</span><span class="pk-v" style="color:var(--violet)">$90,000</span></div>
+        <div class="pk"><span class="pk-l">Repair Jobs Needed</span><span class="pk-v">~45 jobs</span></div>
+        <div class="pk"><span class="pk-l">Repair Revenue</span><span class="pk-v">$18,000</span></div>
+        <div class="pk"><span class="pk-l">Replacement Jobs Needed</span><span class="pk-v gold">~6 jobs</span></div>
+        <div class="pk"><span class="pk-l">Replacement Revenue</span><span class="pk-v gold">$69,000</span></div>
+        <div class="pk"><span class="pk-l">Daily Appointments</span><span class="pk-v">~3.0/day</span></div>
+        <div class="pk"><span class="pk-l">Daily Replace Pace</span><span class="pk-v">~0.29/day</span></div>
+        <div class="pk"><span class="pk-l">Inbound Calls Needed</span><span class="pk-v">~81/mo</span></div>
+        <div class="pk"><span class="pk-l">Marketing Spend</span><span class="pk-v">$7,205</span></div>
+        <div class="pk"><span class="pk-l">Team: Joe Target</span><span class="pk-v" style="color:var(--violet)">$45,000</span></div>
+        <div class="pk"><span class="pk-l">Team: Harry Target</span><span class="pk-v">$45,000</span></div>
+        <div class="pk"><span class="pk-l">Top Channel</span><span class="pk-v">LSA $2,736</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ████ SECTION 2: MONTHLY KPI TABLE ████ -->
+<div class="sec-hdr open" onclick="toggleSec('monthlyKpiB',this)">
+  <div class="sec-l">
+    <div class="sec-dot" style="background:var(--gold)"></div>
+    <span class="sec-ttl">Monthly KPI Breakdown</span>
+    <span class="sec-badge">May · June · July · Aug · Sep · Oct — Revenue, Repairs, Replaces, Marketing</span>
+  </div>
+  <span class="sec-arr">▲</span>
+</div>
+<div class="sec-body open" id="monthlyKpiB">
+  <div class="month-header">
+    <div class="mh-blank"></div>
+    <div class="mh-cell" style="color:var(--cyan)">MAY</div>
+    <div class="mh-cell" style="color:var(--blue)">JUN</div>
+    <div class="mh-cell" style="color:var(--violet)">JUL</div>
+    <div class="mh-cell" style="color:var(--orange)">AUG</div>
+    <div class="mh-cell" style="color:var(--gold)">SEP</div>
+  </div>
+  <div class="monthly-kpi-row">
+    <div class="mkr-label"><div class="mkr-label-t">Revenue Target</div><div class="mkr-label-v" style="color:var(--cyan)">/mo target</div></div>
+    <div class="mkr-cell"><div class="mkr-month">Month 1 · Ramp Up</div><div class="mkr-val" style="color:var(--cyan)">$60,000</div><div class="mkr-sub">Getting started</div></div>
+    <div class="mkr-cell"><div class="mkr-month">Month 2 · Building</div><div class="mkr-val" style="color:var(--blue)">$78,000</div><div class="mkr-sub">+30% growth</div></div>
+    <div class="mkr-cell"><div class="mkr-month">Month 3 · Stabilizing</div><div class="mkr-val" style="color:var(--violet)">$90,000</div><div class="mkr-sub">+15% growth</div></div>
+    <div class="mkr-cell"><div class="mkr-month">Month 4 · Growing</div><div class="mkr-val" style="color:var(--orange)">$95,000</div><div class="mkr-sub">Near full pace</div></div>
+    <div class="mkr-cell"><div class="mkr-month">Month 5 · Full Speed</div><div class="mkr-val" style="color:var(--gold)">$100,000</div><div class="mkr-sub">Target pace</div></div>
+  </div>
+  <div class="monthly-kpi-row">
+    <div class="mkr-label"><div class="mkr-label-t">Repair Jobs</div><div class="mkr-label-v" style="color:var(--lime)">/mo target</div></div>
+    <div class="mkr-cell"><div class="mkr-val">~30</div><div class="mkr-sub">1.4/day · $400 avg</div></div>
+    <div class="mkr-cell"><div class="mkr-val">~39</div><div class="mkr-sub">1.8/day · $400 avg</div></div>
+    <div class="mkr-cell"><div class="mkr-val">~45</div><div class="mkr-sub">2.1/day · $400 avg</div></div>
+    <div class="mkr-cell"><div class="mkr-val">~48</div><div class="mkr-sub">2.2/day · $400 avg</div></div>
+    <div class="mkr-cell"><div class="mkr-val">~50</div><div class="mkr-sub">2.3/day · $400 avg</div></div>
+  </div>
+  <div class="monthly-kpi-row">
+    <div class="mkr-label"><div class="mkr-label-t">Replace Jobs</div><div class="mkr-label-v" style="color:var(--gold)">/mo target</div></div>
+    <div class="mkr-cell"><div class="mkr-val" style="color:var(--gold)">~4</div><div class="mkr-sub">0.19/day · $11.5K</div></div>
+    <div class="mkr-cell"><div class="mkr-val" style="color:var(--gold)">~5</div><div class="mkr-sub">0.25/day · $11.5K</div></div>
+    <div class="mkr-cell"><div class="mkr-val" style="color:var(--gold)">~6</div><div class="mkr-sub">0.29/day · $11.5K</div></div>
+    <div class="mkr-cell"><div class="mkr-val" style="color:var(--gold)">~6-7</div><div class="mkr-sub">0.30/day · $11.5K</div></div>
+    <div class="mkr-cell"><div class="mkr-val" style="color:var(--gold)">~7</div><div class="mkr-sub">0.32/day · $11.5K</div></div>
+  </div>
+  <div class="monthly-kpi-row">
+    <div class="mkr-label"><div class="mkr-label-t">Appointments</div><div class="mkr-label-v" style="color:var(--blue)">/mo target</div></div>
+    <div class="mkr-cell"><div class="mkr-val">~2.0</div><div class="mkr-sub">44/month</div></div>
+    <div class="mkr-cell"><div class="mkr-val">~2.6</div><div class="mkr-sub">57/month</div></div>
+    <div class="mkr-cell"><div class="mkr-val">~3.0</div><div class="mkr-sub">66/month</div></div>
+    <div class="mkr-cell"><div class="mkr-val">~3.1</div><div class="mkr-sub">68/month</div></div>
+    <div class="mkr-cell"><div class="mkr-val">~3.24</div><div class="mkr-sub">71/month</div></div>
+  </div>
+  <div class="monthly-kpi-row">
+    <div class="mkr-label"><div class="mkr-label-t">Inbound Calls</div><div class="mkr-label-v" style="color:var(--violet)">/mo target</div></div>
+    <div class="mkr-cell"><div class="mkr-val">~54</div><div class="mkr-sub">2.5/day</div></div>
+    <div class="mkr-cell"><div class="mkr-val">~70</div><div class="mkr-sub">3.2/day</div></div>
+    <div class="mkr-cell"><div class="mkr-val">~81</div><div class="mkr-sub">3.7/day</div></div>
+    <div class="mkr-cell"><div class="mkr-val">~85</div><div class="mkr-sub">3.9/day</div></div>
+    <div class="mkr-cell"><div class="mkr-val">~89</div><div class="mkr-sub">4.05/day</div></div>
+  </div>
+  <div class="monthly-kpi-row">
+    <div class="mkr-label"><div class="mkr-label-t">Marketing Spend</div><div class="mkr-label-v" style="color:var(--orange)">/mo target</div></div>
+    <div class="mkr-cell"><div class="mkr-val" style="color:var(--orange)">$4,954</div><div class="mkr-sub">May budget</div></div>
+    <div class="mkr-cell"><div class="mkr-val" style="color:var(--orange)">$6,175</div><div class="mkr-sub">June budget</div></div>
+    <div class="mkr-cell"><div class="mkr-val" style="color:var(--orange)">$7,205</div><div class="mkr-sub">July budget</div></div>
+    <div class="mkr-cell"><div class="mkr-val" style="color:var(--orange)">$8,500</div><div class="mkr-sub">Scaling up</div></div>
+    <div class="mkr-cell"><div class="mkr-val" style="color:var(--orange)">$9,500</div><div class="mkr-sub">Full budget</div></div>
+
+  <!-- ACTUAL ROW: Revenue -->
+  <div style="font-family:var(--f-mono);font-size:7px;color:var(--fog);letter-spacing:1.5px;text-transform:uppercase;padding:8px 0 4px 4px;margin-top:6px">▼ Enter Actual Numbers Below</div>
+  <div class="monthly-kpi-row actual-row">
+    <div class="mkr-label"><div class="mkr-label-t">Revenue Actual</div><div class="mkr-label-v">Actual $</div></div>
+    <div class="mkr-cell"><input class="actual-input" type="number" id="aRev1" placeholder="$0" oninput="updateActual()"><div class="vs-target vs-neutral" id="vsRev1">vs $60,000 target</div></div>
+    <div class="mkr-cell"><input class="actual-input" type="number" id="aRev2" placeholder="$0" oninput="updateActual()"><div class="vs-target vs-neutral" id="vsRev2">vs $78,000 target</div></div>
+    <div class="mkr-cell"><input class="actual-input" type="number" id="aRev3" placeholder="$0" oninput="updateActual()"><div class="vs-target vs-neutral" id="vsRev3">vs $90,000 target</div></div>
+    <div class="mkr-cell"><input class="actual-input" type="number" id="aRev4" placeholder="$0" oninput="updateActual()"><div class="vs-target vs-neutral" id="vsRev4">vs $95,000 target</div></div>
+    <div class="mkr-cell"><input class="actual-input" type="number" id="aRev5" placeholder="$0" oninput="updateActual()"><div class="vs-target vs-neutral" id="vsRev5">vs $100,000 target</div></div>
+  </div>
+  <!-- ACTUAL ROW: Repairs -->
+  <div class="monthly-kpi-row actual-row">
+    <div class="mkr-label"><div class="mkr-label-t">Repair Jobs Actual</div><div class="mkr-label-v">Actual #</div></div>
+    <div class="mkr-cell"><input class="actual-input" type="number" id="aRep1" placeholder="0" oninput="updateActual()"><div class="vs-target vs-neutral" id="vsRep1">vs ~30 target</div></div>
+    <div class="mkr-cell"><input class="actual-input" type="number" id="aRep2" placeholder="0" oninput="updateActual()"><div class="vs-target vs-neutral" id="vsRep2">vs ~39 target</div></div>
+    <div class="mkr-cell"><input class="actual-input" type="number" id="aRep3" placeholder="0" oninput="updateActual()"><div class="vs-target vs-neutral" id="vsRep3">vs ~45 target</div></div>
+    <div class="mkr-cell"><input class="actual-input" type="number" id="aRep4" placeholder="0" oninput="updateActual()"><div class="vs-target vs-neutral" id="vsRep4">vs ~48 target</div></div>
+    <div class="mkr-cell"><input class="actual-input" type="number" id="aRep5" placeholder="0" oninput="updateActual()"><div class="vs-target vs-neutral" id="vsRep5">vs ~50 target</div></div>
+  </div>
+  <!-- ACTUAL ROW: Replacements -->
+  <div class="monthly-kpi-row actual-row">
+    <div class="mkr-label"><div class="mkr-label-t">Replace Jobs Actual</div><div class="mkr-label-v">Actual #</div></div>
+    <div class="mkr-cell"><input class="actual-input" type="number" id="aRpl1" placeholder="0" oninput="updateActual()"><div class="vs-target vs-neutral" id="vsRpl1">vs ~4 target</div></div>
+    <div class="mkr-cell"><input class="actual-input" type="number" id="aRpl2" placeholder="0" oninput="updateActual()"><div class="vs-target vs-neutral" id="vsRpl2">vs ~5 target</div></div>
+    <div class="mkr-cell"><input class="actual-input" type="number" id="aRpl3" placeholder="0" oninput="updateActual()"><div class="vs-target vs-neutral" id="vsRpl3">vs ~6 target</div></div>
+    <div class="mkr-cell"><input class="actual-input" type="number" id="aRpl4" placeholder="0" oninput="updateActual()"><div class="vs-target vs-neutral" id="vsRpl4">vs ~6-7 target</div></div>
+    <div class="mkr-cell"><input class="actual-input" type="number" id="aRpl5" placeholder="0" oninput="updateActual()"><div class="vs-target vs-neutral" id="vsRpl5">vs ~7 target</div></div>
+  </div>
+  <!-- ACTUAL ROW: Inbound Calls -->
+  <div class="monthly-kpi-row actual-row">
+    <div class="mkr-label"><div class="mkr-label-t">Inbound Calls Actual</div><div class="mkr-label-v">Actual #</div></div>
+    <div class="mkr-cell"><input class="actual-input" type="number" id="aCall1" placeholder="0" oninput="updateActual()"><div class="vs-target vs-neutral" id="vsCall1">vs ~54 target</div></div>
+    <div class="mkr-cell"><input class="actual-input" type="number" id="aCall2" placeholder="0" oninput="updateActual()"><div class="vs-target vs-neutral" id="vsCall2">vs ~70 target</div></div>
+    <div class="mkr-cell"><input class="actual-input" type="number" id="aCall3" placeholder="0" oninput="updateActual()"><div class="vs-target vs-neutral" id="vsCall3">vs ~81 target</div></div>
+    <div class="mkr-cell"><input class="actual-input" type="number" id="aCall4" placeholder="0" oninput="updateActual()"><div class="vs-target vs-neutral" id="vsCall4">vs ~85 target</div></div>
+    <div class="mkr-cell"><input class="actual-input" type="number" id="aCall5" placeholder="0" oninput="updateActual()"><div class="vs-target vs-neutral" id="vsCall5">vs ~89 target</div></div>
+  </div>
+  </div>
+</div>
+
+<!-- ████ SECTION 3: BIG PROGRESS + TECH TRACKER ████ -->
+<div class="sec-hdr open" onclick="toggleSec('techB',this)">
+  <div class="sec-l">
+    <div class="sec-dot" style="background:var(--violet)"></div>
+    <span class="sec-ttl">Tech & Van Targets + Live Job Tracker</span>
+    <span class="sec-badge">Monthly · Quarterly · Annual Targets · Bonus Simulation · Joe + Harry</span>
+  </div>
+  <span class="sec-arr">▲</span>
+</div>
+<div class="sec-body open" id="techB">
+
+  <!-- BIG BARS: Monthly, Quarterly, Annual -->
+  <div class="mb10">
+    <!-- MONTHLY -->
+    <div class="big-prog-wrap bpw-cyan" style="margin-bottom:10px;position:relative">
+      <span class="bonus-badge" id="bonusMonthly">🏆 BONUS UNLOCKED!</span>
+      <div class="bp-header">
+        <div>
+          <div class="bp-title" style="color:var(--cyan)">Monthly Target</div>
+          <div class="bp-subtitle" style="color:var(--fog)">Team Combined · Goal: $100,000/month</div>
+        </div>
+        <div style="text-align:right">
+          <div class="bp-earned" style="color:var(--cyan)" id="bigMonthEarn">$0</div>
+          <div class="bp-target" id="bigMonthTarget">of $100,000</div>
+        </div>
+      </div>
+      <div class="big-bar-track">
+        <div class="big-bar-fill" id="bigMonthBar" style="width:0%;background:linear-gradient(90deg,var(--cyan2),var(--cyan))">
+          <span class="big-bar-pct" id="bigMonthPct">0%</span>
+        </div>
+      </div>
+      <div class="bp-footer">
+        <span>$0 earned</span>
+        <span>Left: <b id="bigMonthLeft">$100,000</b></span>
+        <span>Joe: <b id="bigMonthJoe">$0</b> · Harry: <b id="bigMonthHarry">$0</b></span>
+      </div>
+    </div>
+
+    <!-- QUARTERLY -->
+    <div class="big-prog-wrap bpw-gold" style="margin-bottom:10px;position:relative">
+      <span class="bonus-badge" id="bonusQuarterly">🏆 Q BONUS!</span>
+      <div class="bp-header">
+        <div>
+          <div class="bp-title" style="color:var(--gold)">Quarterly Target</div>
+          <div class="bp-subtitle" style="color:var(--fog)">Q1 (May–Jul) · Goal: $300,000</div>
+        </div>
+        <div style="text-align:right">
+          <div class="bp-earned" style="color:var(--gold)" id="bigQEarn">$0</div>
+          <div class="bp-target">of $300,000</div>
+        </div>
+      </div>
+      <div class="big-bar-track">
+        <div class="big-bar-fill" id="bigQBar" style="width:0%;background:linear-gradient(90deg,var(--gold2),var(--gold))">
+          <span class="big-bar-pct" id="bigQPct">0%</span>
+        </div>
+      </div>
+      <div class="bp-footer">
+        <span>Q Progress</span>
+        <span>Left: <b id="bigQLeft">$300,000</b></span>
+        <span>Projected pace from monthly jobs</span>
+      </div>
+    </div>
+
+    <!-- ANNUAL -->
+    <div class="big-prog-wrap bpw-violet" style="position:relative">
+      <span class="bonus-badge" id="bonusAnnual">🏆 ANNUAL BONUS!</span>
+      <div class="bp-header">
+        <div>
+          <div class="bp-title" style="color:var(--violet)">Annual Target</div>
+          <div class="bp-subtitle" style="color:var(--fog)">Apr 27, 2026 → Apr 27, 2027 · Goal: $1,200,000</div>
+        </div>
+        <div style="text-align:right">
+          <div class="bp-earned" style="color:var(--violet)" id="bigYEarn">$0</div>
+          <div class="bp-target">of $1,200,000</div>
+        </div>
+      </div>
+      <div class="big-bar-track">
+        <div class="big-bar-fill" id="bigYBar" style="width:0%;background:linear-gradient(90deg,var(--violet2),var(--violet))">
+          <span class="big-bar-pct" id="bigYPct">0%</span>
+        </div>
+      </div>
+      <div class="bp-footer">
+        <span>Apr 2026 → Apr 2027</span>
+        <span>Left: <b id="bigYLeft">$1,200,000</b></span>
+        <span id="bigYDays">365 days remaining</span>
+      </div>
     </div>
   </div>
 
-  <!-- ── SETTINGS TOGGLE ── -->
-  <button class="settings-toggle" id="settingsToggle" onclick="toggleSettings()">
-    ⚙ Settings <span class="arrow">▼</span>
-  </button>
+  <!-- SIMULATE BUTTON -->
+  <div style="display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap">
+    <button class="sim-btn" onclick="simulateScenario()">⚡ Simulate Bonus Scenario</button>
+    <button class="sim-btn sim-btn-cyan" onclick="clearJobs()">🗑 Clear All Jobs</button>
+    <span style="font-family:var(--f-mono);font-size:8px;color:var(--fog)">Simulation: adds realistic jobs to show bonus unlock in action</span>
+  </div>
 
-  <!-- ── SETTINGS PANEL ── -->
-  <div class="settings-panel" id="settingsPanel">
-    <div class="settings-grid">
-      <div class="field">
-        <label>Daily Target ($)</label>
-        <input type="number" id="dailyTarget" placeholder="3333">
-      </div>
-      <div class="field">
-        <label>Monthly Target ($)</label>
-        <input type="number" id="monthlyTarget" placeholder="100000">
-      </div>
-      <div class="field">
-        <label>Quarterly Target ($)</label>
-        <input type="number" id="quarterlyTarget" placeholder="280000">
-      </div>
-      <div class="field">
-        <label>Yearly Target ($)</label>
-        <input type="number" id="yearlyTarget" placeholder="1200000">
-      </div>
-      <div class="field">
-        <label>Work Start (24h)</label>
-        <input type="time" id="workStart" value="09:00">
-      </div>
-      <div class="field">
-        <label>Work End (24h)</label>
-        <input type="time" id="workEnd" value="17:00">
+  <!-- TECH CARDS -->
+  <div class="g2 mb10">
+    <div class="panel">
+      <div class="ph">Truck 1 — Joe Tech</div>
+      <div class="tc tj">
+        <div class="tc-row">
+          <span class="tc-name">⚡ Joe Tech</span>
+          <span class="tc-amt" id="joeAmt">$0</span>
+        </div>
+        <div class="mini">
+          <div class="ms"><div class="ms-v" id="joeJ">0</div><div class="ms-l">Jobs</div></div>
+          <div class="ms"><div class="ms-v" id="joeR">0</div><div class="ms-l">Repairs</div></div>
+          <div class="ms"><div class="ms-v" id="joeP">0</div><div class="ms-l">Replaces</div></div>
+        </div>
+        <div class="tc-inp">
+          <select class="t-sel" id="jT" onchange="toggleCust('joe')">
+            <option value="repair">Repair — $400</option>
+            <option value="replace">Replace — $11,500</option>
+            <option value="custom">Custom Amount $</option>
+          </select>
+          <input class="t-num" type="number" id="jC" placeholder="Enter $">
+          <button class="t-btn" onclick="addJob('joe')">+ Add</button>
+        </div>
+        <div class="tc-prog"><div class="tc-pbar" id="jBar" style="width:0%"></div></div>
+        <div class="tc-foot"><span id="jPct">0% of target</span><span id="jTgt">Target: $50,000</span></div>
       </div>
     </div>
-    <div class="settings-actions">
-      <button class="btn-save" onclick="saveSettings()">Save Settings</button>
-      <button class="btn-reset" onclick="resetSettings()">Reset to Default</button>
-      <span class="save-msg" id="saveMsg">✓ Saved to browser</span>
+    <div class="panel">
+      <div class="ph">Truck 2 — Harry Tech</div>
+      <div class="tc th">
+        <div class="tc-row">
+          <span class="tc-name">🔧 Harry Tech</span>
+          <span class="tc-amt" id="harryAmt">$0</span>
+        </div>
+        <div class="mini">
+          <div class="ms"><div class="ms-v" id="harryJ">0</div><div class="ms-l">Jobs</div></div>
+          <div class="ms"><div class="ms-v" id="harryR">0</div><div class="ms-l">Repairs</div></div>
+          <div class="ms"><div class="ms-v" id="harryP">0</div><div class="ms-l">Replaces</div></div>
+        </div>
+        <div class="tc-inp">
+          <select class="t-sel" id="hT" onchange="toggleCust('harry')">
+            <option value="repair">Repair — $400</option>
+            <option value="replace">Replace — $11,500</option>
+            <option value="custom">Custom Amount $</option>
+          </select>
+          <input class="t-num" type="number" id="hC" placeholder="Enter $">
+          <button class="t-btn" onclick="addJob('harry')">+ Add</button>
+        </div>
+        <div class="tc-prog"><div class="tc-pbar" id="hBar" style="width:0%"></div></div>
+        <div class="tc-foot"><span id="hPct">0% of target</span><span id="hTgt">Target: $50,000</span></div>
+      </div>
     </div>
   </div>
 
-  <!-- ── HERO: TODAY EARNED ── -->
-  <div class="hero fade-in" id="heroBlock">
-    <div class="hero-left">
-      <div class="hero-eyebrow">
-        <span class="live-dot"></span>
-        Today's Earnings
+  <div class="g2">
+    <div class="panel">
+      <div class="ph">Team Combined vs Monthly Goal</div>
+      <div class="combo-bar"><div class="cb-j" id="cbJ" style="width:0%"></div><div class="cb-h" id="cbH" style="width:0%"></div></div>
+      <div class="leg">
+        <div class="li"><div class="lid" style="background:var(--cyan)"></div>Joe: <b id="jLeg" style="color:var(--cyan);margin-left:3px">$0</b></div>
+        <div class="li"><div class="lid" style="background:var(--violet)"></div>Harry: <b id="hLeg" style="color:var(--violet);margin-left:3px">$0</b></div>
+        <div class="li" style="margin-left:auto;color:var(--snow);font-weight:600" id="teamTot">$0 combined</div>
       </div>
-      <div class="hero-amount" id="todayEarned">$0</div>
-      <div class="hero-sub" id="todaySub">
-        <span id="todayLeft">—</span> remaining of today's target
+      <div class="mini4">
+        <div class="ms"><div class="ms-v" id="tJ">0</div><div class="ms-l">Total Jobs</div></div>
+        <div class="ms"><div class="ms-v" id="tR">0</div><div class="ms-l">Repairs</div></div>
+        <div class="ms"><div class="ms-v" id="tP">0</div><div class="ms-l">Replaces</div></div>
+        <div class="ms"><div class="ms-v" id="tAvg">$0</div><div class="ms-l">Avg Job</div></div>
       </div>
     </div>
-    <div class="hero-right">
-      <div class="stat-chip">
-        <div class="sc-val" id="workTimeEl">0h 0m</div>
-        <div class="sc-lbl">Time Elapsed</div>
+    <div class="panel">
+      <div class="ph">Job Log — This Month <button class="bg-btn bg-sm" onclick="clearJobs()">Clear</button></div>
+      <div class="jlog" id="jobLog"><div class="jlog-empty">No jobs yet. Use + Add above.</div></div>
+      <div style="font-family:var(--f-mono);font-size:7px;color:var(--fog);margin-top:6px" id="jCount"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ████ SECTION 4: MARKETING ████ -->
+<div class="sec-hdr open" onclick="toggleSec('mktB',this)">
+  <div class="sec-l">
+    <div class="sec-dot" style="background:var(--blue)"></div>
+    <span class="sec-ttl">Marketing Budget & ROI Tracker</span>
+    <span class="sec-badge">$114K Annual · 10 Channels · Pre-loaded with your budget numbers</span>
+  </div>
+  <span class="sec-arr">▲</span>
+</div>
+<div class="sec-body open" id="mktB">
+  <div class="msum">
+    <div class="mi"><div class="mi-l">Annual Budget (w/ NAF)</div><div class="mi-v mg-txt">$114,000</div></div>
+    <div class="mi"><div class="mi-l">Monthly Budget</div><div class="mi-v mc-txt">$9,500</div></div>
+    <div class="mi"><div class="mi-l">Total Spent (tracked)</div><div class="mi-v mg-txt" id="mktSpend">$0</div></div>
+    <div class="mi"><div class="mi-l">Revenue Attributed</div><div class="mi-v mc-txt" id="mktRev">$0</div></div>
+    <div class="mi"><div class="mi-l">Overall ROI</div><div class="mi-v ml-txt" id="mktROI">—</div></div>
+  </div>
+  <div class="msum" style="margin-bottom:10px">
+    <div class="mi"><div class="mi-l">NAF Contribution</div><div class="mi-v">$18,000/yr</div></div>
+    <div class="mi"><div class="mi-l">LSA (Largest Channel)</div><div class="mi-v mc-txt">38% · $43,320/yr</div></div>
+    <div class="mi"><div class="mi-l">Lead Aggregators</div><div class="mi-v">18.5% · $21,090/yr</div></div>
+    <div class="mi"><div class="mi-l">GBP + SEO</div><div class="mi-v">16% · $18,240/yr</div></div>
+    <div class="mi"><div class="mi-l">Mkt % of Revenue</div><div class="mi-v">9.5%</div></div>
+  </div>
+
+  <!-- 10 CHANNEL CARDS (your actual budget %) -->
+  <div class="g5 mb10">
+    <!-- LSA 38% -->
+    <div class="mc mc-lsa">
+      <div class="mc-ch">Google LSA</div>
+      <div class="mc-budget">38% · $3,610/mo · $43,320/yr</div>
+      <div class="mc-rv" id="lsaRev">$0</div>
+      <div class="mc-roi roi-u" id="lsaROI">Enter spend → see ROI</div>
+      <div class="mc-fi">
+        <div class="fi"><label>Budget</label><input class="bf" type="number" id="lsaB" value="3610" oninput="saveMkt()"></div>
+        <div class="fi"><label>Spent</label><input type="number" id="lsaS" placeholder="actual $" oninput="saveMkt()"></div>
+        <div class="fi"><label>Revenue</label><input type="number" id="lsaR" placeholder="from LSA" oninput="saveMkt()"></div>
       </div>
-      <div class="rate-pill">Rate: <span id="rateEl">$0/hr</span></div>
+    </div>
+    <!-- Lead Agg 18.5% -->
+    <div class="mc mc-agg">
+      <div class="mc-ch">Lead Aggregators</div>
+      <div class="mc-budget">18.5% · $1,758/mo · $21,090/yr</div>
+      <div class="mc-rv" id="aggRev">$0</div>
+      <div class="mc-roi roi-u" id="aggROI">Enter spend → see ROI</div>
+      <div class="mc-fi">
+        <div class="fi"><label>Budget</label><input class="bf" type="number" id="aggB" value="1758" oninput="saveMkt()"></div>
+        <div class="fi"><label>Spent</label><input type="number" id="aggS" placeholder="actual $" oninput="saveMkt()"></div>
+        <div class="fi"><label>Revenue</label><input type="number" id="aggR" placeholder="from Angi/HA" oninput="saveMkt()"></div>
+      </div>
+    </div>
+    <!-- GBP 10% -->
+    <div class="mc mc-gbp">
+      <div class="mc-ch">GBP Optimization</div>
+      <div class="mc-budget">10% · $950/mo · $11,400/yr</div>
+      <div class="mc-rv" id="gbpRev">$0</div>
+      <div class="mc-roi roi-u" id="gbpROI">Enter spend → see ROI</div>
+      <div class="mc-fi">
+        <div class="fi"><label>Budget</label><input class="bf" type="number" id="gbpB" value="950" oninput="saveMkt()"></div>
+        <div class="fi"><label>Spent</label><input type="number" id="gbpS" placeholder="actual $" oninput="saveMkt()"></div>
+        <div class="fi"><label>Revenue</label><input type="number" id="gbpR" placeholder="from GBP" oninput="saveMkt()"></div>
+      </div>
+    </div>
+    <!-- PPC 10% -->
+    <div class="mc mc-ppc">
+      <div class="mc-ch">PPC Google Ads</div>
+      <div class="mc-budget">10% · $950/mo · $11,400/yr</div>
+      <div class="mc-rv" id="ppcRev">$0</div>
+      <div class="mc-roi roi-u" id="ppcROI">Enter spend → see ROI</div>
+      <div class="mc-fi">
+        <div class="fi"><label>Budget</label><input class="bf" type="number" id="ppcB" value="950" oninput="saveMkt()"></div>
+        <div class="fi"><label>Spent</label><input type="number" id="ppcS" placeholder="actual $" oninput="saveMkt()"></div>
+        <div class="fi"><label>Revenue</label><input type="number" id="ppcR" placeholder="from PPC" oninput="saveMkt()"></div>
+      </div>
+    </div>
+    <!-- SEO 6% -->
+    <div class="mc mc-seo">
+      <div class="mc-ch">Local Website SEO</div>
+      <div class="mc-budget">6% · $570/mo · $6,840/yr</div>
+      <div class="mc-rv" id="seoRev">$0</div>
+      <div class="mc-roi roi-u" id="seoROI">Enter spend → see ROI</div>
+      <div class="mc-fi">
+        <div class="fi"><label>Budget</label><input class="bf" type="number" id="seoB" value="570" oninput="saveMkt()"></div>
+        <div class="fi"><label>Spent</label><input type="number" id="seoS" placeholder="actual $" oninput="saveMkt()"></div>
+        <div class="fi"><label>Revenue</label><input type="number" id="seoR" placeholder="from SEO" oninput="saveMkt()"></div>
+      </div>
     </div>
   </div>
-
-  <!-- ── GOAL CARDS ── -->
-  <div class="goals-grid fade-in">
-    <div class="goal-card monthly">
-      <div class="gc-label">Monthly Goal</div>
-      <div class="gc-earned" id="mEarned">$0</div>
-      <div class="gc-remaining">Remaining: <span id="mRemaining">—</span></div>
-      <div class="progress-track"><div class="progress-fill" id="mBar" style="width:0%"></div></div>
-      <div class="gc-pct" id="mPct">0%</div>
+  <div class="g5 mb10">
+    <!-- Paid Social 5% -->
+    <div class="mc mc-social">
+      <div class="mc-ch">Paid Social Media</div>
+      <div class="mc-budget">5% · $475/mo · $5,700/yr</div>
+      <div class="mc-rv" id="socialRev">$0</div>
+      <div class="mc-roi roi-u" id="socialROI">Enter spend → see ROI</div>
+      <div class="mc-fi">
+        <div class="fi"><label>Budget</label><input class="bf" type="number" id="socialB" value="475" oninput="saveMkt()"></div>
+        <div class="fi"><label>Spent</label><input type="number" id="socialS" placeholder="actual $" oninput="saveMkt()"></div>
+        <div class="fi"><label>Revenue</label><input type="number" id="socialR" placeholder="from social" oninput="saveMkt()"></div>
+      </div>
     </div>
-    <div class="goal-card quarterly">
-      <div class="gc-label">Quarterly Goal</div>
-      <div class="gc-earned" id="qEarned">$0</div>
-      <div class="gc-remaining">Remaining: <span id="qRemaining">—</span></div>
-      <div class="progress-track"><div class="progress-fill" id="qBar" style="width:0%"></div></div>
-      <div class="gc-pct" id="qPct">0%</div>
+    <!-- Grassroots 4.5% -->
+    <div class="mc mc-grass">
+      <div class="mc-ch">Grassroots Marketing</div>
+      <div class="mc-budget">4.5% · $428/mo · $5,130/yr</div>
+      <div class="mc-rv" id="grassRev">$0</div>
+      <div class="mc-roi roi-u" id="grassROI">Enter spend → see ROI</div>
+      <div class="mc-fi">
+        <div class="fi"><label>Budget</label><input class="bf" type="number" id="grassB" value="428" oninput="saveMkt()"></div>
+        <div class="fi"><label>Spent</label><input type="number" id="grassS" placeholder="yard signs/flyers" oninput="saveMkt()"></div>
+        <div class="fi"><label>Revenue</label><input type="number" id="grassR" placeholder="from grassroots" oninput="saveMkt()"></div>
+      </div>
     </div>
-    <div class="goal-card yearly">
-      <div class="gc-label">Yearly Goal</div>
-      <div class="gc-earned" id="yEarned">$0</div>
-      <div class="gc-remaining">Remaining: <span id="yRemaining">—</span></div>
-      <div class="progress-track"><div class="progress-fill" id="yBar" style="width:0%"></div></div>
-      <div class="gc-pct" id="yPct">0%</div>
+    <!-- Direct Mail 4% -->
+    <div class="mc mc-mail">
+      <div class="mc-ch">Direct / Shared Mail</div>
+      <div class="mc-budget">4% · $380/mo · $4,560/yr</div>
+      <div class="mc-rv" id="mailRev">$0</div>
+      <div class="mc-roi roi-u" id="mailROI">Enter spend → see ROI</div>
+      <div class="mc-fi">
+        <div class="fi"><label>Budget</label><input class="bf" type="number" id="mailB" value="380" oninput="saveMkt()"></div>
+        <div class="fi"><label>Spent</label><input type="number" id="mailS" placeholder="actual $" oninput="saveMkt()"></div>
+        <div class="fi"><label>Revenue</label><input type="number" id="mailR" placeholder="from mail" oninput="saveMkt()"></div>
+      </div>
+    </div>
+    <!-- Community Events 2.5% -->
+    <div class="mc mc-comm">
+      <div class="mc-ch">Community Events</div>
+      <div class="mc-budget">2.5% · $238/mo · $2,850/yr</div>
+      <div class="mc-rv" id="commRev">$0</div>
+      <div class="mc-roi roi-u" id="commROI">Enter spend → see ROI</div>
+      <div class="mc-fi">
+        <div class="fi"><label>Budget</label><input class="bf" type="number" id="commB" value="238" oninput="saveMkt()"></div>
+        <div class="fi"><label>Spent</label><input type="number" id="commS" placeholder="actual $" oninput="saveMkt()"></div>
+        <div class="fi"><label>Revenue</label><input type="number" id="commR" placeholder="from events" oninput="saveMkt()"></div>
+      </div>
+    </div>
+    <!-- Networking 1.5% -->
+    <div class="mc mc-net">
+      <div class="mc-ch">Networking Groups</div>
+      <div class="mc-budget">1.5% · $143/mo · $1,710/yr</div>
+      <div class="mc-rv" id="netRev">$0</div>
+      <div class="mc-roi roi-u" id="netROI">Enter spend → see ROI</div>
+      <div class="mc-fi">
+        <div class="fi"><label>Budget</label><input class="bf" type="number" id="netB" value="143" oninput="saveMkt()"></div>
+        <div class="fi"><label>Spent</label><input type="number" id="netS" placeholder="actual $" oninput="saveMkt()"></div>
+        <div class="fi"><label>Revenue</label><input type="number" id="netR" placeholder="from networking" oninput="saveMkt()"></div>
+      </div>
     </div>
   </div>
+</div>
 
-  <!-- ── STATS STRIP ── -->
-  <div class="stats-strip fade-in">
-    <div class="ss-item">
-      <div class="ss-lbl">Per Minute</div>
-      <div class="ss-val teal" id="perMin">$0.00</div>
-    </div>
-    <div class="ss-item">
-      <div class="ss-lbl">Per Hour</div>
-      <div class="ss-val teal" id="perHour">$0.00</div>
-    </div>
-    <div class="ss-item">
-      <div class="ss-lbl">Needed / Day (Month)</div>
-      <div class="ss-val gold" id="neededDay">—</div>
-    </div>
-    <div class="ss-item">
-      <div class="ss-lbl">On Track?</div>
-      <div class="ss-val" id="onTrack">—</div>
+<!-- ████ SECTION 5: COMPETITORS ████ -->
+<div class="sec-hdr" onclick="toggleSec('compB',this)">
+  <div class="sec-l">
+    <div class="sec-dot" style="background:var(--red)"></div>
+    <span class="sec-ttl">Top 5 Competitors — Est. Annual Revenue</span>
+    <span class="sec-badge">Fuquay-Varina · Angier · Holly Springs · Click to Expand</span>
+  </div>
+  <span class="sec-arr">▼</span>
+</div>
+<div class="sec-body" id="compB">
+  <div class="g5 mb10">
+    <div class="comp-card comp1"><div class="comp-rank">#1</div><div class="comp-name">Carolina Comfort Air</div><div class="comp-area">Holly Springs · Clayton Area</div><div class="comp-rev">$18–25M</div><div class="comp-label">Est. Annual Revenue 2024</div><div class="comp-stats"><div class="comp-stat"><span class="cs-l">Est. Trucks</span><span class="cs-v">40–60</span></div><div class="comp-stat"><span class="cs-l">Staff</span><span class="cs-v">300+</span></div><div class="comp-stat"><span class="cs-l">Founded</span><span class="cs-v">2007</span></div></div><div class="comp-threat threat-h">HIGH THREAT</div><div class="comp-bar-wrap"><div class="comp-bar-lbl"><span>Market Dominance</span><span>~35%</span></div><div class="comp-bar-track"><div class="comp-bar-fill" style="width:85%"></div></div></div></div>
+    <div class="comp-card comp2"><div class="comp-rank">#2</div><div class="comp-name">Service Medic H&A</div><div class="comp-area">Holly Springs · Fuquay · Angier</div><div class="comp-rev">$4–8M</div><div class="comp-label">Est. Annual Revenue 2024</div><div class="comp-stats"><div class="comp-stat"><span class="cs-l">Est. Trucks</span><span class="cs-v">8–15</span></div><div class="comp-stat"><span class="cs-l">Rating</span><span class="cs-v">Forbes Top Rated</span></div><div class="comp-stat"><span class="cs-l">Speed</span><span class="cs-v">Same-day service</span></div></div><div class="comp-threat threat-h">HIGH THREAT</div><div class="comp-bar-wrap"><div class="comp-bar-lbl"><span>Market Share Est.</span><span>~12%</span></div><div class="comp-bar-track"><div class="comp-bar-fill" style="width:55%"></div></div></div></div>
+    <div class="comp-card comp3"><div class="comp-rank">#3</div><div class="comp-name">Ideal Services H&C</div><div class="comp-area">Holly Springs Region</div><div class="comp-rev">$3–6M</div><div class="comp-label">Est. Annual Revenue 2024</div><div class="comp-stats"><div class="comp-stat"><span class="cs-l">Est. Trucks</span><span class="cs-v">6–12</span></div><div class="comp-stat"><span class="cs-l">Years in Biz</span><span class="cs-v">20+</span></div><div class="comp-stat"><span class="cs-l">Customer Base</span><span class="cs-v">Very loyal</span></div></div><div class="comp-threat threat-h">HIGH THREAT</div><div class="comp-bar-wrap"><div class="comp-bar-lbl"><span>Market Share Est.</span><span>~9%</span></div><div class="comp-bar-track"><div class="comp-bar-fill" style="width:44%"></div></div></div></div>
+    <div class="comp-card comp4"><div class="comp-rank">#4</div><div class="comp-name">Austin Heating & Air</div><div class="comp-area">Fuquay-Varina · Holly Springs</div><div class="comp-rev">$1.5–3M</div><div class="comp-label">Est. Annual Revenue 2024</div><div class="comp-stats"><div class="comp-stat"><span class="cs-l">Est. Trucks</span><span class="cs-v">4–7</span></div><div class="comp-stat"><span class="cs-l">Type</span><span class="cs-v">Local hometown</span></div><div class="comp-stat"><span class="cs-l">Focus</span><span class="cs-v">Residential</span></div></div><div class="comp-threat threat-m">MED THREAT</div><div class="comp-bar-wrap"><div class="comp-bar-lbl"><span>Market Share Est.</span><span>~5%</span></div><div class="comp-bar-track"><div class="comp-bar-fill" style="width:30%"></div></div></div></div>
+    <div class="comp-card comp5"><div class="comp-rank">#5</div><div class="comp-name">Bar-Co Mechanical</div><div class="comp-area">Fuquay-Varina · Wake County</div><div class="comp-rev">$1–2.5M</div><div class="comp-label">Est. Annual Revenue 2024</div><div class="comp-stats"><div class="comp-stat"><span class="cs-l">Est. Trucks</span><span class="cs-v">3–6</span></div><div class="comp-stat"><span class="cs-l">Founded</span><span class="cs-v">1996</span></div><div class="comp-stat"><span class="cs-l">Type</span><span class="cs-v">Family-owned</span></div></div><div class="comp-threat threat-m">MED THREAT</div><div class="comp-bar-wrap"><div class="comp-bar-lbl"><span>Market Share Est.</span><span>~4%</span></div><div class="comp-bar-track"><div class="comp-bar-fill" style="width:24%"></div></div></div></div>
+  </div>
+  <div class="panel">
+    <div class="ph">Territory Intelligence</div>
+    <div class="g2">
+      <div>
+        <div class="msr"><div class="msr-l">Market Population</div><div class="msr-v">111,972</div></div>
+        <div class="msr"><div class="msr-l">Total Homes in Territory</div><div class="msr-v">42,095</div></div>
+        <div class="msr"><div class="msr-l">Total Annual HVAC Jobs (Market)</div><div class="msr-v">7,016</div></div>
+        <div class="msr"><div class="msr-l">Jobs Available / Month</div><div class="msr-v">585</div></div>
+        <div class="msr"><div class="msr-l">Jobs YOU Need / Month</div><div class="msr-v" style="color:var(--cyan)">57 (9.7% share)</div></div>
+      </div>
+      <div>
+        <div class="msr"><div class="msr-l">Repair Jobs / Month</div><div class="msr-v" style="color:var(--cyan)">50</div></div>
+        <div class="msr"><div class="msr-l">Replacement Jobs / Month</div><div class="msr-v" style="color:var(--gold)">7</div></div>
+        <div class="msr"><div class="msr-l">Revenue Leverage Point</div><div class="msr-v" style="color:var(--gold)">7 replaces = $80K</div></div>
+        <div class="msr"><div class="msr-l">Angier Opportunity</div><div class="msr-v" style="color:var(--lime)">UNDERSERVED — WIDE OPEN</div></div>
+        <div class="msr"><div class="msr-l">Launch Date</div><div class="msr-v" style="color:var(--gold)">April 27, 2026</div></div>
+      </div>
     </div>
   </div>
+</div>
 
-  <!-- ── DAYS LEFT ROW ── -->
-  <div class="days-row fade-in">
-    <div class="day-card month">
-      <div class="dc-lbl">Days Left in Month</div>
-      <div class="dc-val" id="daysMonth">—</div>
-    </div>
-    <div class="day-card quarter">
-      <div class="dc-lbl">Days Left in Quarter</div>
-      <div class="dc-val" id="daysQ">—</div>
-    </div>
-    <div class="day-card year">
-      <div class="dc-lbl">Days Left in Year</div>
-      <div class="dc-val" id="daysY">—</div>
-    </div>
-  </div>
-
-  <!-- ── FOOTER ── -->
-  <div class="footer fade-in">
-    <p>Built for the 30 · 60 · 90 Day Finance Plan &nbsp;|&nbsp; Settings auto-save to your browser &nbsp;|&nbsp; Updates every second</p>
-  </div>
-
-</div><!-- /page -->
+</div>
 
 <script>
-// ════════════════════════════════════════════════════════
-//  REVENUE TRACKER — CONFIGURATION & ENGINE
-//  Targets and work hours are saved in localStorage so
-//  they persist between browser sessions automatically.
-// ════════════════════════════════════════════════════════
+const LAUNCH = new Date('2026-04-27T00:00:00');
+const YEAREND = new Date('2027-04-27T00:00:00');
+const YTOTAL = Math.round((YEAREND - LAUNCH) / 864e5);
+const DEF = {d:3333,m:100000,a:1200000,joe:50000,harry:50000,wsh:8,wsm:0,weh:18,wem:0};
+let C = {...DEF}, jobs = [];
+const MCH = ['lsa','agg','gbp','ppc','seo','social','grass','mail','comm','net'];
+let MK = {};
+MCH.forEach(c => MK[c] = {b:0,s:0,r:0});
 
-const DEFAULTS = {
-  dailyTarget:     3333,
-  monthlyTarget:   100000,
-  quarterlyTarget: 280000,
-  yearlyTarget:    1200000,
-  workStartHour:   9,
-  workStartMin:    0,
-  workEndHour:     17,
-  workEndMin:      0,
+// Bonus tracking
+let bonusMShown = false, bonusQShown = false, bonusYShown = false;
+
+// Storage
+function sto(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+function ret(k){try{const v=localStorage.getItem(k);return v?JSON.parse(v):null}catch(e){return null}}
+function del(k){try{localStorage.removeItem(k)}catch(e){}}
+
+window.addEventListener('load',()=>{
+  C={...DEF,...(ret('hvc_cfg')||{})};
+  jobs=ret('hvc_jobs')||[];
+  const sm=ret('hvc_mkt'); if(sm)MK=sm;
+  syncStgUI(); syncMktInputs(); renderLog(); updateTech(); updateMkt(); loadActual();
+  tick(); setInterval(tick,1000);
+});
+
+function toggleSec(id,hdr){
+  const b=document.getElementById(id),o=b.classList.toggle('open');
+  hdr.classList.toggle('open',o);
+  hdr.querySelector('.sec-arr').textContent=o?'▲':'▼';
+}
+function toggleStg(){
+  const p=document.getElementById('stgPanel'),b=document.getElementById('stgBtn');
+  const o=p.classList.toggle('open');b.classList.toggle('open',o);
+}
+function syncStgUI(){
+  const sv=(id,v)=>{const e=document.getElementById(id);if(e)e.value=v};
+  sv('sD',C.d);sv('sM',C.m);sv('sA',C.a);sv('sJ',C.joe);sv('sH',C.harry);
+  sv('sWS',pad(C.wsh)+':'+pad(C.wsm));sv('sWE',pad(C.weh)+':'+pad(C.wem));
+}
+function saveStg(){
+  const g=id=>parseFloat(document.getElementById(id)?.value)||0;
+  C.d=g('sD')||DEF.d;C.m=g('sM')||DEF.m;C.a=g('sA')||DEF.a;
+  C.joe=g('sJ')||DEF.joe;C.harry=g('sH')||DEF.harry;
+  const[sh,sm]=(document.getElementById('sWS')?.value||'8:00').split(':').map(Number);
+  const[eh,em]=(document.getElementById('sWE')?.value||'18:00').split(':').map(Number);
+  C.wsh=sh;C.wsm=sm;C.weh=eh;C.wem=em;
+  sto('hvc_cfg',C);
+  const fl=document.getElementById('flash');fl.textContent='✓ Saved';fl.classList.add('show');
+  setTimeout(()=>fl.classList.remove('show'),2000);
+}
+function resetStg(){C={...DEF};syncStgUI();del('hvc_cfg');}
+
+function toggleCust(t){
+  const sel=document.getElementById(t==='joe'?'jT':'hT');
+  const inp=document.getElementById(t==='joe'?'jC':'hC');
+  if(inp)inp.style.display=sel.value==='custom'?'inline-block':'none';
+}
+
+function addJob(tech,amt,type){
+  if(!amt){
+    const sel=document.getElementById(tech==='joe'?'jT':'hT');
+    type=sel?.value||'repair';
+    amt=type==='repair'?400:type==='replace'?11500:0;
+    if(type==='custom'){
+      const ci=document.getElementById(tech==='joe'?'jC':'hC');
+      amt=parseFloat(ci?.value)||0;if(!amt){ci?.focus();return;}ci.value='';
+    }
+  }
+  jobs.push({tech,amt,type:type==='replace'?'replace':'repair',
+    ts:new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})});
+  sto('hvc_jobs',jobs);renderLog();updateTech();
+}
+
+function removeJob(i){jobs.splice(i,1);sto('hvc_jobs',jobs);renderLog();updateTech();}
+function clearJobs(){
+  if(jobs.length&&!confirm('Clear all jobs?'))return;
+  jobs=[];bonusMShown=false;bonusQShown=false;bonusYShown=false;
+  ['bonusMonthly','bonusQuarterly','bonusAnnual'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.classList.remove('show');
+  });
+  del('hvc_jobs');renderLog();updateTech();
+}
+
+function renderLog(){
+  const el=document.getElementById('jobLog');
+  if(!jobs.length){el.innerHTML='<div class="jlog-empty">No jobs yet. Use + Add above.</div>';T('jCount','');return;}
+  el.innerHTML=[...jobs].reverse().map((j,ri)=>{
+    const i=jobs.length-1-ri;
+    const col=j.tech==='joe'?'var(--cyan)':'var(--violet)';
+    const nm=j.tech==='joe'?'⚡ Joe':'🔧 Harry';
+    const badge=j.type==='replace'
+      ?'<span class="je-b jep">REPLACE</span>'
+      :'<span class="je-b jer">REPAIR</span>';
+    return`<div class="je"><span class="je-n" style="color:${col}">${nm}</span>${badge}<span class="je-a">${fc(j.amt)}</span><span class="je-t">${j.ts}</span><button class="je-x" onclick="removeJob(${i})">✕</button></div>`;
+  }).join('');
+  T('jCount',jobs.length+' job'+(jobs.length!==1?'s':'')+' logged this month');
+}
+
+function updateTech(){
+  const jj=jobs.filter(j=>j.tech==='joe'),hj=jobs.filter(j=>j.tech==='harry');
+  const jT=jj.reduce((s,j)=>s+j.amt,0),hT=hj.reduce((s,j)=>s+j.amt,0);
+  const team=jT+hT,mo=C.m||1;
+
+  T('joeAmt',fc(jT));T('jLeg',fc(jT));
+  T('joeJ',jj.length);T('joeR',jj.filter(j=>j.type==='repair').length);
+  T('joeP',jj.filter(j=>j.type==='replace').length);
+  const jp=Math.min(jT/(C.joe||1)*100,100);
+  W('jBar',jp.toFixed(1)+'%');T('jPct',jp.toFixed(1)+'% of target');T('jTgt','Target: '+fc(C.joe));
+
+  T('harryAmt',fc(hT));T('hLeg',fc(hT));
+  T('harryJ',hj.length);T('harryR',hj.filter(j=>j.type==='repair').length);
+  T('harryP',hj.filter(j=>j.type==='replace').length);
+  const hp=Math.min(hT/(C.harry||1)*100,100);
+  W('hBar',hp.toFixed(1)+'%');T('hPct',hp.toFixed(1)+'% of target');T('hTgt','Target: '+fc(C.harry));
+
+  const jm=Math.min(jT/mo*100,100),hm=Math.min(hT/mo*100,100);
+  W('cbJ',jm.toFixed(1)+'%');W('cbH',Math.min(hm,100-jm).toFixed(1)+'%');
+  T('teamTot',fc(team)+' combined');
+  T('tJ',jobs.length);T('tR',jobs.filter(j=>j.type==='repair').length);
+  T('tP',jobs.filter(j=>j.type==='replace').length);
+  T('tAvg',jobs.length?fc(team/jobs.length):'$0');
+
+  // BIG BARS
+  const mp=Math.min(team/mo*100,100);
+  W('bigMonthBar',mp.toFixed(1)+'%');
+  T('bigMonthPct',mp.toFixed(1)+'%');
+  T('bigMonthEarn',fc(team));
+  T('bigMonthLeft',fc(Math.max(mo-team,0)));
+  T('bigMonthJoe',fc(jT));
+  T('bigMonthHarry',fc(hT));
+
+  // Quarterly (approx 3 months)
+  const qTotal=mo*3,qEarn=team,qp=Math.min(qEarn/qTotal*100,100);
+  W('bigQBar',qp.toFixed(1)+'%');T('bigQPct',qp.toFixed(1)+'%');
+  T('bigQEarn',fc(qEarn));T('bigQLeft',fc(Math.max(qTotal-qEarn,0)));
+
+  // Annual
+  const yp=Math.min(team/C.a*100,100);
+  W('bigYBar',yp.toFixed(1)+'%');T('bigYPct',yp.toFixed(1)+'%');
+  T('bigYEarn',fc(team));T('bigYLeft',fc(Math.max(C.a-team,0)));
+
+  // BONUS CHECKS
+  if(mp>=100&&!bonusMShown){bonusMShown=true;showBonus('monthly');showNotif('bonus','🏆 Monthly Target Crushed!','Joe + Harry hit $'+Math.round(mo).toLocaleString()+'! Bonuses triggered — great work team!');}
+  if(qp>=100&&!bonusQShown){bonusQShown=true;showBonus('quarterly');showNotif('bonus','🏆 Quarterly Bonus Unlocked!','Q1 target of $300K reached! Quarterly bonuses are in play!');}
+  if(yp>=100&&!bonusYShown){bonusYShown=true;showBonus('annual');showNotif('bonus','🎉 Annual Goal ACHIEVED!','$1.2M milestone hit! Maximum annual bonuses unlocked for both techs!');}
+}
+
+function showBonus(period){
+  const ids={monthly:'bonusMonthly',quarterly:'bonusQuarterly',annual:'bonusAnnual'};
+  const el=document.getElementById(ids[period]);
+  if(el){el.classList.add('show');setTimeout(()=>el.classList.remove('show'),5000);}
+}
+
+// NOTIFICATION SYSTEM
+function showNotif(type,title,body){
+  const container=document.getElementById('notifContainer');
+  const div=document.createElement('div');
+  div.className=`notif-item notif-${type==='bonus'?'bonus':'cyan'}`;
+  div.innerHTML=`<div class="notif-title">${title}</div><div class="notif-body">${body}</div>`;
+  container.appendChild(div);
+  setTimeout(()=>{div.classList.add('notif-out');setTimeout(()=>div.remove(),400);},5000);
+}
+
+// SIMULATE SCENARIO
+function simulateScenario(){
+  clearJobs();
+  bonusMShown=false;bonusQShown=false;bonusYShown=false;
+  showNotif('cyan','⚡ Simulation Starting','Loading a great month scenario for Joe & Harry...');
+  const scenario=[
+    {tech:'joe',type:'replace'},{tech:'harry',type:'repair'},{tech:'joe',type:'repair'},
+    {tech:'harry',type:'replace'},{tech:'joe',type:'repair'},{tech:'harry',type:'repair'},
+    {tech:'joe',type:'repair'},{tech:'harry',type:'replace'},{tech:'joe',type:'repair'},
+    {tech:'harry',type:'repair'},{tech:'joe',type:'replace'},{tech:'harry',type:'repair'},
+    {tech:'joe',type:'repair'},{tech:'harry',type:'replace'},{tech:'joe',type:'repair'},
+    {tech:'harry',type:'repair'},{tech:'joe',type:'replace'},{tech:'harry',type:'repair'},
+    {tech:'joe',type:'repair'},{tech:'harry',type:'replace'},{tech:'joe',type:'repair'},
+    {tech:'harry',type:'repair'},{tech:'joe',type:'replace'},{tech:'harry',type:'repair'},
+    {tech:'joe',type:'repair'},{tech:'harry',type:'replace'},{tech:'joe',type:'repair'},
+    {tech:'harry',type:'repair'},
+  ];
+  let i=0;
+  const interval=setInterval(()=>{
+    if(i>=scenario.length){clearInterval(interval);return;}
+    const s=scenario[i];
+    const amt=s.type==='replace'?11500:400;
+    addJob(s.tech,amt,s.type);
+    i++;
+  },300);
+}
+
+// MARKETING
+function syncMktInputs(){
+  MCH.forEach(c=>{
+    const d=MK[c]||{b:0,s:0,r:0};
+    const sv=(id,v)=>{const e=document.getElementById(id);if(e&&v)e.value=v};
+    sv(c+'B',d.b||'');sv(c+'S',d.s||'');sv(c+'R',d.r||'');
+  });
+}
+function saveMkt(){
+  MCH.forEach(c=>{
+    MK[c]={
+      b:parseFloat(document.getElementById(c+'B')?.value)||0,
+      s:parseFloat(document.getElementById(c+'S')?.value)||0,
+      r:parseFloat(document.getElementById(c+'R')?.value)||0
+    };
+  });
+  sto('hvc_mkt',MK);updateMkt();
+}
+function updateMkt(){
+  let tS=0,tR=0,tB=0;
+  MCH.forEach(c=>{
+    const d=MK[c];tS+=d.s;tR+=d.r;tB+=d.b;
+    const re=document.getElementById(c+'Rev');if(re)re.textContent=fc(d.r);
+    const roe=document.getElementById(c+'ROI');
+    if(roe){
+      if(!d.s){roe.textContent='Enter spend → see ROI';roe.className='mc-roi roi-u';}
+      else{
+        const roi=((d.r-d.s)/d.s*100).toFixed(0),x=(d.r/d.s).toFixed(1);
+        roe.textContent='ROI: '+roi+'% ('+x+'x) · Spend: '+fc(d.s);
+        roe.className='mc-roi '+(roi>=0?'roi-p':'roi-n');
+      }
+    }
+  });
+  T('mktSpend',fc(tS));T('mktRev',fc(tR));
+  const roiEl=document.getElementById('mktROI');
+  if(tS>0){
+    const roi=((tR-tS)/tS*100).toFixed(0);
+    roiEl.textContent=roi+'% ('+(tR/tS).toFixed(1)+'x)';
+    roiEl.className='mi-v '+(roi>=0?'ml-txt':'mr-txt');
+  } else{roiEl.textContent='—';roiEl.className='mi-v mc-txt';}
+}
+
+// HELPERS
+const pad=n=>String(n).padStart(2,'0');
+function T(id,v){const e=document.getElementById(id);if(e)e.textContent=v;}
+function W(id,v){const e=document.getElementById(id);if(e)e.style.width=v;}
+function fc(n){return'$'+Math.round(n).toLocaleString('en-US');}
+function ff(n){if(n>=1e6)return'$'+(n/1e6).toFixed(2)+'M';if(n>=1e3)return'$'+(n/1e3).toFixed(1)+'K';return'$'+n.toFixed(2);}
+function dim(y,m){return new Date(y,m+1,0).getDate();}
+
+function tick(){
+  const now=new Date();
+  T('clock',now.toLocaleTimeString('en-US',{hour12:false}));
+  T('cdate',now.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'}));
+  const ss=C.wsh*3600+C.wsm*60,es=C.weh*3600+C.wem*60,tw=es-ss;
+  const ns=now.getHours()*3600+now.getMinutes()*60+now.getSeconds();
+  const working=ns>=ss&&ns<=es;
+  const el=Math.max(0,Math.min(ns-ss,tw));
+  const dp=tw>0?Math.min(el/tw,1):0;
+  const te=C.d*dp,tl=Math.max(C.d-te,0);
+  const hr=el>0?te/(el/3600):0;
+  T('tkToday',fc(te));T('tkLeft',fc(tl));T('tkRate',ff(hr)+'/hr');
+  T('tkElapsed',Math.floor(el/3600)+'h '+Math.floor((el%3600)/60)+'m');
+  const dsl=Math.max(0,Math.floor((now-LAUNCH)/864e5));
+  T('tkDays',now<LAUNCH?'Not Open Yet':dsl);
+  const stEl=document.getElementById('tkStatus');
+  if(stEl){stEl.textContent=working?'✅ Tracking':'🌙 Off Hours';stEl.style.color=working?'var(--cyan)':'var(--fog)';}
+  const dLeft=dim(now.getFullYear(),now.getMonth())-now.getDate();
+  const yEl=now<LAUNCH?0:Math.min(dsl/YTOTAL,1);
+  T('bigYDays',Math.max(YTOTAL-dsl,0)+' days remaining');
+}
+
+// ACTUAL VS TARGET
+const TARGETS = {
+  rev: [60000, 78000, 90000, 95000, 100000],
+  rep: [30, 39, 45, 48, 50],
+  rpl: [4, 5, 6, 6.5, 7],
+  call: [54, 70, 81, 85, 89]
 };
-
-let cfg = { ...DEFAULTS };
-
-// ── PERSISTENCE ──────────────────────────────────────────
-function loadSettings() {
-  try {
-    const saved = localStorage.getItem('revenueTrackerCfg');
-    if (saved) cfg = { ...DEFAULTS, ...JSON.parse(saved) };
-  } catch(e) {}
-  syncInputs();
+function updateActual(){
+  const fields = [
+    {prefix:'Rev', targets:TARGETS.rev, prefix2:'aRev', fmt:(v)=>'$'+Math.round(v).toLocaleString()},
+    {prefix:'Rep', targets:TARGETS.rep, prefix2:'aRep', fmt:(v)=>v},
+    {prefix:'Rpl', targets:TARGETS.rpl, prefix2:'aRpl', fmt:(v)=>v},
+    {prefix:'Call', targets:TARGETS.call, prefix2:'aCall', fmt:(v)=>v}
+  ];
+  fields.forEach(f=>{
+    for(let i=1;i<=5;i++){
+      const inp=document.getElementById(f.prefix2+i);
+      const vs=document.getElementById('vs'+f.prefix+i);
+      if(!inp||!vs)continue;
+      const val=parseFloat(inp.value)||0;
+      if(!val){vs.className='vs-target vs-neutral';return;}
+      const tgt=f.targets[i-1];
+      const pct=((val/tgt)*100).toFixed(0);
+      const good=val>=tgt;
+      vs.className='vs-target '+(good?'vs-good':'vs-behind');
+      vs.textContent=(good?'✓ ':'⚠ ')+pct+'% of target'+(good?' — On track!':' — Behind');
+    }
+  });
+  sto('hvc_actual', {
+    rev:[1,2,3,4,5].map(i=>parseFloat(document.getElementById('aRev'+i)?.value)||0),
+    rep:[1,2,3,4,5].map(i=>parseFloat(document.getElementById('aRep'+i)?.value)||0),
+    rpl:[1,2,3,4,5].map(i=>parseFloat(document.getElementById('aRpl'+i)?.value)||0),
+    call:[1,2,3,4,5].map(i=>parseFloat(document.getElementById('aCall'+i)?.value)||0),
+  });
+}
+function loadActual(){
+  const d=ret('hvc_actual');if(!d)return;
+  ['rev','rep','rpl','call'].forEach(k=>{
+    const pre=k.charAt(0).toUpperCase()+k.slice(1);
+    (d[k]||[]).forEach((v,i)=>{
+      const el=document.getElementById('a'+pre+(i+1));
+      if(el&&v)el.value=v;
+    });
+  });
+  updateActual();
 }
 
-function syncInputs() {
-  document.getElementById('dailyTarget').value     = cfg.dailyTarget;
-  document.getElementById('monthlyTarget').value   = cfg.monthlyTarget;
-  document.getElementById('quarterlyTarget').value = cfg.quarterlyTarget;
-  document.getElementById('yearlyTarget').value    = cfg.yearlyTarget;
-  document.getElementById('workStart').value =
-    String(cfg.workStartHour).padStart(2,'0') + ':' + String(cfg.workStartMin).padStart(2,'0');
-  document.getElementById('workEnd').value =
-    String(cfg.workEndHour).padStart(2,'0') + ':' + String(cfg.workEndMin).padStart(2,'0');
-}
-
-function saveSettings() {
-  cfg.dailyTarget     = parseFloat(document.getElementById('dailyTarget').value)     || DEFAULTS.dailyTarget;
-  cfg.monthlyTarget   = parseFloat(document.getElementById('monthlyTarget').value)   || DEFAULTS.monthlyTarget;
-  cfg.quarterlyTarget = parseFloat(document.getElementById('quarterlyTarget').value) || DEFAULTS.quarterlyTarget;
-  cfg.yearlyTarget    = parseFloat(document.getElementById('yearlyTarget').value)    || DEFAULTS.yearlyTarget;
-
-  const [sh, sm] = document.getElementById('workStart').value.split(':').map(Number);
-  const [eh, em] = document.getElementById('workEnd').value.split(':').map(Number);
-  cfg.workStartHour = sh; cfg.workStartMin = sm;
-  cfg.workEndHour   = eh; cfg.workEndMin   = em;
-
-  try { localStorage.setItem('revenueTrackerCfg', JSON.stringify(cfg)); } catch(e) {}
-
-  const msg = document.getElementById('saveMsg');
-  msg.classList.add('show');
-  setTimeout(() => msg.classList.remove('show'), 2500);
-  tick();
-}
-
-function resetSettings() {
-  cfg = { ...DEFAULTS };
-  syncInputs();
-  try { localStorage.removeItem('revenueTrackerCfg'); } catch(e) {}
-  tick();
-}
-
-// ── SETTINGS PANEL TOGGLE ────────────────────────────────
-function toggleSettings() {
-  const panel  = document.getElementById('settingsPanel');
-  const toggle = document.getElementById('settingsToggle');
-  const isOpen = panel.classList.contains('visible');
-  panel.classList.toggle('visible', !isOpen);
-  toggle.classList.toggle('open', !isOpen);
-}
-
-// ── FORMATTERS ───────────────────────────────────────────
-function fmt(n) {
-  if (n >= 1_000_000) return '$' + (n / 1_000_000).toFixed(2) + 'M';
-  if (n >= 1_000)     return '$' + (n / 1_000).toFixed(1) + 'K';
-  return '$' + n.toFixed(2);
-}
-
-function fmtComma(n) {
-  return '$' + Math.round(n).toLocaleString('en-US');
-}
-
-function daysInMonth(y, m) { return new Date(y, m + 1, 0).getDate(); }
-
-function dayOfYear(d) {
-  return Math.floor((d - new Date(d.getFullYear(), 0, 0)) / 86_400_000);
-}
-
-function daysInYear(y) {
-  return ((y % 4 === 0 && y % 100 !== 0) || y % 400 === 0) ? 366 : 365;
-}
-
-function quarterInfo(now) {
-  const q      = Math.floor(now.getMonth() / 3);
-  const qStart = new Date(now.getFullYear(), q * 3, 1);
-  const qEnd   = new Date(now.getFullYear(), q * 3 + 3, 0);
-  const total  = Math.round((qEnd - qStart) / 86_400_000) + 1;
-  const elapsed= Math.round((now - qStart) / 86_400_000);
-  return { elapsed, remaining: total - elapsed, total };
-}
-
-// ── MAIN TICK ────────────────────────────────────────────
-function tick() {
-  const now = new Date();
-
-  // Clock
-  document.getElementById('clock').textContent =
-    now.toLocaleTimeString('en-US', { hour12: false });
-  document.getElementById('dateLine').textContent =
-    now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
-
-  // Work window math
-  const startSec    = cfg.workStartHour * 3600 + cfg.workStartMin * 60;
-  const endSec      = cfg.workEndHour   * 3600 + cfg.workEndMin   * 60;
-  const totalWork   = endSec - startSec;
-  const nowSec      = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
-  const isWorking   = nowSec >= startSec && nowSec <= endSec;
-
-  let elapsedSec = 0;
-  if (isWorking)        elapsedSec = nowSec - startSec;
-  else if (nowSec > endSec) elapsedSec = totalWork;
-
-  const dayProg     = Math.min(elapsedSec / totalWork, 1);
-  const todayEarned = cfg.dailyTarget * dayProg;
-  const todayLeft   = Math.max(cfg.dailyTarget - todayEarned, 0);
-
-  // Hero
-  document.getElementById('todayEarned').textContent = fmtComma(todayEarned);
-  document.getElementById('todayLeft').textContent   = fmtComma(todayLeft);
-
-  const eh = Math.floor(elapsedSec / 3600);
-  const em = Math.floor((elapsedSec % 3600) / 60);
-  document.getElementById('workTimeEl').textContent = eh + 'h ' + em + 'm';
-
-  const hrRate = elapsedSec > 0 ? (todayEarned / (elapsedSec / 3600)) : 0;
-  document.getElementById('rateEl').textContent = fmt(hrRate) + '/hr';
-
-  const hero = document.getElementById('heroBlock');
-  hero.classList.toggle('live', isWorking);
-
-  // Monthly
-  const dim      = daysInMonth(now.getFullYear(), now.getMonth());
-  const dom      = now.getDate();
-  const mElapsed = dom - 1 + dayProg;
-  const mEarned  = (mElapsed / dim) * cfg.monthlyTarget;
-  const mLeft    = Math.max(cfg.monthlyTarget - mEarned, 0);
-  const mPct     = Math.min(mEarned / cfg.monthlyTarget * 100, 100);
-  document.getElementById('mEarned').textContent    = fmtComma(mEarned);
-  document.getElementById('mRemaining').textContent = fmtComma(mLeft);
-  document.getElementById('mBar').style.width       = mPct.toFixed(1) + '%';
-  document.getElementById('mPct').textContent       = mPct.toFixed(1) + '%';
-
-  // Quarterly
-  const qi      = quarterInfo(now);
-  const qEarned = ((qi.elapsed + dayProg) / qi.total) * cfg.quarterlyTarget;
-  const qLeft   = Math.max(cfg.quarterlyTarget - qEarned, 0);
-  const qPct    = Math.min(qEarned / cfg.quarterlyTarget * 100, 100);
-  document.getElementById('qEarned').textContent    = fmtComma(qEarned);
-  document.getElementById('qRemaining').textContent = fmtComma(qLeft);
-  document.getElementById('qBar').style.width       = qPct.toFixed(1) + '%';
-  document.getElementById('qPct').textContent       = qPct.toFixed(1) + '%';
-
-  // Yearly
-  const doy     = dayOfYear(now) - 1 + dayProg;
-  const diy     = daysInYear(now.getFullYear());
-  const yEarned = (doy / diy) * cfg.yearlyTarget;
-  const yLeft   = Math.max(cfg.yearlyTarget - yEarned, 0);
-  const yPct    = Math.min(yEarned / cfg.yearlyTarget * 100, 100);
-  document.getElementById('yEarned').textContent    = fmtComma(yEarned);
-  document.getElementById('yRemaining').textContent = fmtComma(yLeft);
-  document.getElementById('yBar').style.width       = yPct.toFixed(1) + '%';
-  document.getElementById('yPct').textContent       = yPct.toFixed(1) + '%';
-
-  // Stats strip
-  const perMin = elapsedSec > 0 ? todayEarned / (elapsedSec / 60) : 0;
-  document.getElementById('perMin').textContent  = fmt(perMin) + '/min';
-  document.getElementById('perHour').textContent = fmt(hrRate) + '/hr';
-
-  const dLeft         = dim - dom;
-  const neededPerDay  = dLeft > 0 ? mLeft / dLeft : mLeft;
-  document.getElementById('neededDay').textContent = fmtComma(neededPerDay) + '/day';
-
-  const expected  = (dom / dim) * cfg.monthlyTarget;
-  const onTrack   = mEarned >= expected * 0.9;
-  const otEl      = document.getElementById('onTrack');
-  otEl.textContent = onTrack ? '✅ On Track' : '⚠️ Behind';
-  otEl.style.color = onTrack ? 'var(--teal)' : 'var(--gold)';
-
-  // Days left cards
-  document.getElementById('daysMonth').textContent = dLeft;
-  document.getElementById('daysQ').textContent     = qi.remaining;
-  document.getElementById('daysY').textContent     = diy - dayOfYear(now);
-}
-
-// ── INIT ────────────────────────────────────────────────
-loadSettings();
-tick();
-setInterval(tick, 1000);
 </script>
 </body>
 </html>
