@@ -1,0 +1,1176 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HVAC Command Center — Fuquay-Varina NC</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@300;400;500;700&family=Barlow+Condensed:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ══════════ DESIGN TOKENS ══════════════════════════════ */
+:root{
+  --bg:#040810;--s1:#070E1A;--s2:#0A1422;--s3:#0D1A2C;--card:#0F1E30;
+  --e1:#1A2E44;--e2:#253C54;--e3:#305060;
+  --cyan:#00F5C4;--cyan2:#00C49A;--cyan3:#008A6C;
+  --gold:#FFC043;--gold2:#D4971A;
+  --blue:#4AA8FF;--blue2:#1A7AE0;
+  --red:#FF4466;--red2:#CC1A3A;
+  --violet:#C06AFF;--violet2:#8A30D8;
+  --lime:#3EE888;--orange:#FF7A30;
+  --snow:#E4F2FF;--mist:#7A9ABB;--fog:#3A5870;--deep:#1B3048;
+  --f-display:'Bebas Neue',sans-serif;
+  --f-mono:'JetBrains Mono',monospace;
+  --f-body:'Barlow Condensed',sans-serif;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--snow);font-family:var(--f-body);min-height:100vh;overflow-x:hidden;font-size:13px;line-height:1.4}
+
+/* ══════════ BACKGROUNDS ════════════════════════════════ */
+.bg-wrap{position:fixed;inset:0;pointer-events:none;z-index:0}
+.bg-glow{background:
+  radial-gradient(ellipse 80% 50% at -10% -5%,rgba(0,245,196,.06) 0%,transparent 55%),
+  radial-gradient(ellipse 60% 40% at 110% 110%,rgba(74,168,255,.05) 0%,transparent 55%),
+  radial-gradient(ellipse 40% 30% at 50% 50%,rgba(192,106,255,.03) 0%,transparent 60%)}
+.bg-grid{
+  background-image:linear-gradient(rgba(0,245,196,.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,245,196,.03) 1px,transparent 1px);
+  background-size:56px 56px}
+.bg-scan{
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,245,196,.008) 2px,rgba(0,245,196,.008) 4px);
+  animation:scan 8s linear infinite}
+@keyframes scan{0%{background-position:0 0}100%{background-position:0 112px}}
+
+/* ══════════ PAGE WRAPPER ═══════════════════════════════ */
+.page{position:relative;z-index:1;max-width:1380px;margin:0 auto;padding:16px 14px 80px}
+
+/* ══════════ TOP NAV ════════════════════════════════════ */
+.topnav{
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+  background:var(--s1);border:1px solid var(--e1);border-radius:12px;
+  padding:12px 20px;margin-bottom:12px;flex-wrap:wrap;
+  position:relative;overflow:hidden}
+.topnav::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,var(--cyan),rgba(0,245,196,.3),transparent 70%)}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-logo{
+  width:40px;height:40px;border-radius:9px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--cyan),var(--cyan2));
+  display:flex;align-items:center;justify-content:center;font-size:18px;
+  box-shadow:0 0 24px rgba(0,245,196,.4)}
+.brand-name{font-family:var(--f-display);font-size:18px;letter-spacing:3px;line-height:1}
+.brand-sub{font-family:var(--f-mono);font-size:7px;color:var(--fog);letter-spacing:2px;text-transform:uppercase;margin-top:2px}
+.nav-pills{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.pill{font-family:var(--f-mono);font-size:7px;letter-spacing:1px;text-transform:uppercase;
+  padding:3px 9px;border-radius:20px;border:1px solid var(--e1);color:var(--mist)}
+.pill-live{border-color:rgba(0,245,196,.4);color:var(--cyan);background:rgba(0,245,196,.06);
+  display:flex;align-items:center;gap:4px}
+.pill-gold{border-color:rgba(255,192,67,.4);color:var(--gold);background:rgba(255,192,67,.06)}
+.pulsedot{width:5px;height:5px;border-radius:50%;background:var(--cyan);animation:pd 1.2s step-end infinite}
+@keyframes pd{50%{opacity:0}}
+.nav-clock{text-align:right}
+.clockface{font-family:var(--f-mono);font-size:24px;color:var(--cyan);letter-spacing:2px;line-height:1}
+.clockdate{font-family:var(--f-mono);font-size:7px;color:var(--fog);letter-spacing:1px;margin-top:2px}
+
+/* ══════════ LIVE TICKER STRIP ══════════════════════════ */
+.ticker{
+  display:flex;background:var(--s1);border:1px solid var(--e1);border-radius:10px;
+  padding:10px 18px;margin-bottom:12px;gap:0;overflow:hidden;position:relative}
+.ticker::after{content:'';position:absolute;bottom:0;left:20%;right:20%;height:1px;
+  background:rgba(0,245,196,.15)}
+.tik{flex:1;min-width:90px;padding:0 14px;border-right:1px solid var(--e1);text-align:center}
+.tik:first-child{padding-left:0;text-align:left}
+.tik:last-child{border-right:none;text-align:right}
+.tik-v{font-family:var(--f-display);font-size:26px;letter-spacing:1px;line-height:1}
+.tik-l{font-family:var(--f-mono);font-size:7px;color:var(--fog);letter-spacing:2px;text-transform:uppercase;margin-top:3px}
+
+/* ══════════ ACCORDION SECTIONS ════════════════════════ */
+.sec{margin-bottom:0}
+.sec-hdr{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:9px 16px;background:var(--s1);border:1px solid var(--e1);
+  border-radius:9px;margin:14px 0 9px;cursor:pointer;user-select:none;
+  transition:border-color .2s,background .15s}
+.sec-hdr:hover{border-color:var(--e2);background:var(--s2)}
+.sec-hdr.open{border-color:var(--e2)}
+.sec-l{display:flex;align-items:center;gap:8px}
+.sec-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.sec-ttl{font-family:var(--f-mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--mist)}
+.sec-badge{font-family:var(--f-mono);font-size:7px;color:var(--fog);
+  background:var(--deep);border-radius:3px;padding:2px 7px;letter-spacing:1px}
+.sec-arr{font-size:9px;color:var(--fog);transition:transform .22s}
+.sec-hdr.open .sec-arr{transform:rotate(180deg)}
+.sec-body{display:none}
+.sec-body.open{display:block;animation:fadeIn .18s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+
+/* ══════════ GRID SYSTEM ════════════════════════════════ */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.g5{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.g6{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+.g7{display:grid;grid-template-columns:repeat(7,1fr);gap:10px}
+.mb10{margin-bottom:10px}
+
+/* ══════════ KPI STAT CARD ══════════════════════════════ */
+.kc{
+  background:var(--s1);border:1px solid var(--e1);border-radius:11px;
+  padding:13px 14px 10px;position:relative;overflow:hidden;
+  transition:border-color .18s,transform .15s}
+.kc:hover{transform:translateY(-1px);border-color:var(--e2)}
+.kc::after{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.kc-l{font-family:var(--f-mono);font-size:7px;color:var(--fog);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px}
+.kc-v{font-family:var(--f-display);font-size:32px;letter-spacing:1px;line-height:1;margin-bottom:2px}
+.kc-s{font-family:var(--f-mono);font-size:8px;color:var(--fog);margin-top:5px}
+.kc-s b{color:var(--mist)}
+.kc-bar{background:var(--deep);border-radius:100px;height:3px;overflow:hidden;margin-top:8px}
+.kc-fill{height:100%;border-radius:100px;transition:width 1.2s cubic-bezier(.4,0,.2,1)}
+.kc-pct{font-family:var(--f-mono);font-size:8px;text-align:right;margin-top:3px}
+/* accents */
+.ac .kc-v,.ac .kc-pct{color:var(--cyan)} .ac::after{background:linear-gradient(90deg,var(--cyan),transparent)} .ac .kc-fill{background:var(--cyan)}
+.ag .kc-v,.ag .kc-pct{color:var(--gold)} .ag::after{background:linear-gradient(90deg,var(--gold),transparent)} .ag .kc-fill{background:var(--gold)}
+.ab .kc-v,.ab .kc-pct{color:var(--blue)} .ab::after{background:linear-gradient(90deg,var(--blue),transparent)} .ab .kc-fill{background:var(--blue)}
+.ar .kc-v,.ar .kc-pct{color:var(--red)} .ar::after{background:linear-gradient(90deg,var(--red),transparent)} .ar .kc-fill{background:var(--red)}
+.av .kc-v,.av .kc-pct{color:var(--violet)} .av::after{background:linear-gradient(90deg,var(--violet),transparent)} .av .kc-fill{background:var(--violet)}
+.ao .kc-v,.ao .kc-pct{color:var(--orange)} .ao::after{background:linear-gradient(90deg,var(--orange),transparent)} .ao .kc-fill{background:var(--orange)}
+.al .kc-v,.al .kc-pct{color:var(--lime)} .al::after{background:linear-gradient(90deg,var(--lime),transparent)} .al .kc-fill{background:var(--lime)}
+
+/* ══════════ PANEL BOX ══════════════════════════════════ */
+.panel{background:var(--s1);border:1px solid var(--e1);border-radius:11px;padding:14px 16px}
+.ph{font-family:var(--f-mono);font-size:8px;color:var(--fog);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
+
+/* ══════════ FUNNEL CHART ═══════════════════════════════ */
+.fn-row{display:grid;grid-template-columns:108px 1fr 50px;gap:8px;align-items:center;padding:2px 0}
+.fn-lbl{font-family:var(--f-mono);font-size:8px;color:var(--mist);text-align:right}
+.fn-track{background:var(--deep);border-radius:5px;height:22px;overflow:hidden}
+.fn-fill{height:100%;border-radius:5px;display:flex;align-items:center;padding-left:8px;
+  font-family:var(--f-mono);font-size:9px;font-weight:500;color:rgba(0,0,0,.85);
+  white-space:nowrap;min-width:48px}
+.fn-num{font-family:var(--f-mono);font-size:9px;font-weight:500;text-align:right}
+.fn-mid{font-family:var(--f-mono);font-size:7px;color:var(--fog);text-align:center;padding:1px 0 1px 116px;letter-spacing:1px}
+
+/* ══════════ TECH TRACKER ═══════════════════════════════ */
+.tc{background:var(--card);border:1px solid var(--e1);border-radius:11px;padding:13px 14px;position:relative;overflow:hidden}
+.tc::before{content:'';position:absolute;top:0;left:0;bottom:0;width:3px;border-radius:3px 0 0 3px}
+.tj::before{background:var(--cyan)} .th::before{background:var(--violet)}
+.tc-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}
+.tc-name{font-weight:600;font-size:13px;font-family:var(--f-body)}
+.tj .tc-name{color:var(--cyan)} .th .tc-name{color:var(--violet)}
+.tc-amt{font-family:var(--f-display);font-size:22px;letter-spacing:1px}
+.tj .tc-amt{color:var(--cyan)} .th .tc-amt{color:var(--violet)}
+.mini{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:9px}
+.ms{background:var(--deep);border-radius:6px;padding:6px 8px;text-align:center}
+.ms-v{font-family:var(--f-mono);font-size:12px;font-weight:500;color:var(--snow)}
+.ms-l{font-family:var(--f-mono);font-size:6px;color:var(--fog);letter-spacing:1px;text-transform:uppercase;margin-top:2px}
+.tc-inp{display:flex;gap:5px;margin-bottom:7px;flex-wrap:wrap}
+.t-sel,.t-num{
+  background:var(--bg);border:1px solid var(--e2);border-radius:6px;
+  padding:6px 8px;color:var(--snow);font-family:var(--f-mono);font-size:10px;
+  outline:none;transition:border-color .15s}
+.t-sel{flex:1.4;min-width:0} .t-num{flex:1;display:none;min-width:0}
+.t-sel:focus,.t-num:focus{border-color:var(--cyan)}
+.t-btn{
+  border:none;border-radius:6px;padding:6px 11px;
+  font-family:var(--f-body);font-size:11px;font-weight:600;
+  cursor:pointer;white-space:nowrap;transition:opacity .15s,transform .1s}
+.t-btn:hover{opacity:.82;transform:scale(1.02)}
+.tj .t-btn{background:var(--cyan);color:#000} .th .t-btn{background:var(--violet);color:#fff}
+.tc-prog{background:var(--deep);border-radius:100px;height:3px;overflow:hidden}
+.tc-pbar{height:100%;border-radius:100px;transition:width .8s ease}
+.tj .tc-pbar{background:var(--cyan)} .th .tc-pbar{background:var(--violet)}
+.tc-foot{display:flex;justify-content:space-between;margin-top:4px;font-family:var(--f-mono);font-size:7px;color:var(--fog)}
+.combo-bar{height:8px;border-radius:100px;background:var(--deep);overflow:hidden;display:flex;margin:7px 0}
+.cb-j{background:var(--cyan);height:100%;transition:width .8s ease}
+.cb-h{background:var(--violet);height:100%;transition:width .8s ease}
+.leg{display:flex;gap:12px;flex-wrap:wrap}
+.li{display:flex;align-items:center;gap:4px;font-family:var(--f-mono);font-size:9px;color:var(--mist)}
+.lid{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.mini4{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:9px}
+
+/* ══════════ JOB LOG ════════════════════════════════════ */
+.jlog{display:flex;flex-direction:column;gap:4px;max-height:250px;overflow-y:auto}
+.jlog::-webkit-scrollbar{width:3px}
+.jlog::-webkit-scrollbar-track{background:var(--deep)}
+.jlog::-webkit-scrollbar-thumb{background:var(--e2);border-radius:2px}
+.je{background:var(--bg);border:1px solid var(--e1);border-radius:6px;
+  padding:5px 9px;display:flex;align-items:center;gap:5px;font-family:var(--f-mono);font-size:9px}
+.je-n{font-weight:500;flex-shrink:0}
+.je-b{font-size:6px;padding:1px 5px;border-radius:3px;flex-shrink:0}
+.jer{background:rgba(0,245,196,.12);color:var(--cyan)}
+.jep{background:rgba(255,192,67,.12);color:var(--gold)}
+.je-a{font-weight:600;color:var(--snow);margin-left:auto}
+.je-t{color:var(--fog);flex-shrink:0}
+.je-x{background:none;border:none;color:var(--fog);cursor:pointer;font-size:11px;transition:color .15s;flex-shrink:0}
+.je-x:hover{color:var(--red)}
+.jlog-empty{font-family:var(--f-mono);font-size:9px;color:var(--fog);text-align:center;padding:26px 0}
+
+/* ══════════ MARKETING CHANNEL CARD ════════════════════ */
+.mc{background:var(--s2);border:1px solid var(--e1);border-radius:10px;padding:11px 12px;position:relative;overflow:hidden}
+.mc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.mc-ppc::before{background:linear-gradient(90deg,#EA4335,#FBBC04)}
+.mc-lsa::before{background:linear-gradient(90deg,#4285F4,#34A853)}
+.mc-agg::before{background:linear-gradient(90deg,#FF6B2B,transparent)}
+.mc-gbp::before{background:linear-gradient(90deg,#34A853,transparent)}
+.mc-seo::before{background:linear-gradient(90deg,#8B5CF6,transparent)}
+.mc-mail::before{background:linear-gradient(90deg,#F59E0B,transparent)}
+.mc-comm::before{background:linear-gradient(90deg,#06B6D4,transparent)}
+.mc-ch{font-family:var(--f-mono);font-size:7px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px}
+.mc-ppc .mc-ch{color:#EA4335} .mc-lsa .mc-ch{color:#4285F4}
+.mc-agg .mc-ch{color:#FF6B2B} .mc-gbp .mc-ch{color:#34A853}
+.mc-seo .mc-ch{color:#8B5CF6} .mc-mail .mc-ch{color:#F59E0B}
+.mc-comm .mc-ch{color:#06B6D4}
+.mc-pct{font-family:var(--f-mono);font-size:8px;color:var(--fog);margin-bottom:4px}
+.mc-rv{font-family:var(--f-display);font-size:22px;letter-spacing:1px;color:var(--snow);line-height:1;margin-bottom:2px}
+.mc-roi{font-family:var(--f-mono);font-size:8px;margin-bottom:6px}
+.roi-p{color:var(--lime)} .roi-n{color:var(--red)} .roi-u{color:var(--fog)}
+.mc-fi{display:flex;flex-direction:column;gap:3px}
+.fi{display:flex;align-items:center;gap:4px}
+.fi label{font-family:var(--f-mono);font-size:6px;color:var(--fog);letter-spacing:1px;text-transform:uppercase;width:42px;flex-shrink:0}
+.fi input{
+  flex:1;background:var(--bg);border:1px solid var(--e2);border-radius:5px;
+  padding:4px 7px;color:var(--snow);font-family:var(--f-mono);font-size:9px;
+  outline:none;transition:border-color .15s;min-width:0}
+.fi input:focus{border-color:var(--cyan)}
+.fi .bf:focus{border-color:var(--gold)}
+
+/* ══════════ MKT SUMMARY ════════════════════════════════ */
+.msum{display:grid;grid-template-columns:repeat(5,1fr);gap:0;
+  background:var(--s1);border:1px solid var(--e1);border-radius:9px;padding:10px 16px;margin-bottom:10px}
+.mi{padding:0 11px;border-right:1px solid var(--e1);text-align:center}
+.mi:first-child{padding-left:0;text-align:left}.mi:last-child{border-right:none;text-align:right}
+.mi-l{font-family:var(--f-mono);font-size:6px;color:var(--fog);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:3px}
+.mi-v{font-family:var(--f-display);font-size:18px;letter-spacing:1px}
+.mc-txt{color:var(--cyan)} .mg-txt{color:var(--gold)} .mr-txt{color:var(--red)} .ml-txt{color:var(--lime)}
+
+/* ══════════ COMPETITOR SECTION ═════════════════════════ */
+.comp-card{background:var(--s2);border:1px solid var(--e1);border-radius:11px;padding:14px 16px;position:relative;overflow:hidden}
+.comp-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.comp1::before{background:linear-gradient(90deg,var(--red),transparent)}
+.comp2::before{background:linear-gradient(90deg,var(--orange),transparent)}
+.comp3::before{background:linear-gradient(90deg,var(--gold),transparent)}
+.comp4::before{background:linear-gradient(90deg,var(--blue),transparent)}
+.comp5::before{background:linear-gradient(90deg,var(--violet),transparent)}
+.comp-rank{font-family:var(--f-display);font-size:38px;color:var(--deep);position:absolute;top:8px;right:12px;line-height:1;user-select:none}
+.comp-name{font-size:12px;font-weight:700;color:var(--snow);margin-bottom:3px;font-family:var(--f-body);letter-spacing:.5px}
+.comp-area{font-family:var(--f-mono);font-size:7px;color:var(--fog);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
+.comp-rev{font-family:var(--f-display);font-size:28px;letter-spacing:1px;margin-bottom:2px}
+.comp1 .comp-rev{color:var(--red)} .comp2 .comp-rev{color:var(--orange)}
+.comp3 .comp-rev{color:var(--gold)} .comp4 .comp-rev{color:var(--blue)}
+.comp5 .comp-rev{color:var(--violet)}
+.comp-label{font-family:var(--f-mono);font-size:7px;color:var(--fog);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
+.comp-stats{display:flex;flex-direction:column;gap:3px}
+.comp-stat{display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:8px}
+.cs-l{color:var(--fog)} .cs-v{color:var(--mist);font-weight:500}
+.comp-threat{display:inline-block;font-family:var(--f-mono);font-size:7px;letter-spacing:1px;text-transform:uppercase;padding:2px 8px;border-radius:3px;margin-top:6px}
+.threat-h{background:rgba(255,68,102,.15);color:var(--red);border:1px solid rgba(255,68,102,.3)}
+.threat-m{background:rgba(255,192,67,.12);color:var(--gold);border:1px solid rgba(255,192,67,.25)}
+.threat-l{background:rgba(62,232,136,.1);color:var(--lime);border:1px solid rgba(62,232,136,.2)}
+.comp-bar-wrap{margin-top:8px}
+.comp-bar-lbl{font-family:var(--f-mono);font-size:7px;color:var(--fog);display:flex;justify-content:space-between;margin-bottom:3px}
+.comp-bar-track{background:var(--deep);border-radius:100px;height:4px;overflow:hidden}
+.comp-bar-fill{height:100%;border-radius:100px;transition:width 1.2s ease}
+.comp1 .comp-bar-fill{background:var(--red)}
+.comp2 .comp-bar-fill{background:var(--orange)}
+.comp3 .comp-bar-fill{background:var(--gold)}
+.comp4 .comp-bar-fill{background:var(--blue)}
+.comp5 .comp-bar-fill{background:var(--violet)}
+
+/* ══════════ MARKET DONUT ═══════════════════════════════ */
+.donut-wrap{position:relative;width:86px;height:86px;flex-shrink:0}
+.donut-wrap svg{transform:rotate(-90deg)}
+.donut-mid{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.donut-v{font-family:var(--f-display);font-size:15px;color:var(--cyan);line-height:1}
+.donut-l{font-family:var(--f-mono);font-size:6px;color:var(--fog);letter-spacing:1px}
+.msr{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--e1)}
+.msr:last-child{border-bottom:none}
+.msr-l{font-family:var(--f-mono);font-size:8px;color:var(--fog)}
+.msr-v{font-family:var(--f-mono);font-size:9px;font-weight:500;color:var(--snow)}
+
+/* ══════════ SETTINGS ═══════════════════════════════════ */
+.stg-btn{
+  background:var(--s1);border:1px solid var(--e1);border-radius:8px;
+  padding:6px 12px;color:var(--mist);font-family:var(--f-mono);font-size:8px;
+  letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;
+  display:flex;align-items:center;gap:5px;transition:border-color .2s,color .2s;
+  margin-bottom:9px;width:fit-content}
+.stg-btn:hover{border-color:var(--cyan);color:var(--cyan)}
+.stg-arr{display:inline-block;transition:transform .22s}
+.stg-btn.open .stg-arr{transform:rotate(180deg)}
+.stg-panel{display:none;background:var(--s1);border:1px solid var(--e1);border-radius:11px;padding:14px 16px 16px;margin-bottom:12px}
+.stg-panel.open{display:block}
+.sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-bottom:10px}
+.sf label{display:block;font-family:var(--f-mono);font-size:7px;color:var(--fog);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px}
+.sf input{width:100%;background:var(--bg);border:1px solid var(--e2);border-radius:6px;padding:7px 9px;color:var(--snow);font-family:var(--f-mono);font-size:11px;outline:none;transition:border-color .15s}
+.sf input:focus{border-color:var(--cyan)}
+.brow{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+.bp{background:var(--cyan);color:#000;border:none;border-radius:6px;padding:7px 16px;font-family:var(--f-body);font-size:12px;font-weight:700;cursor:pointer;transition:opacity .15s}
+.bp:hover{opacity:.85}
+.bg{background:transparent;color:var(--mist);border:1px solid var(--e2);border-radius:6px;padding:7px 12px;font-family:var(--f-body);font-size:12px;cursor:pointer;transition:border-color .15s,color .15s}
+.bg:hover{border-color:var(--red);color:var(--red)}
+.bg-sm{padding:4px 9px;font-size:10px}
+.flash{font-family:var(--f-mono);font-size:8px;color:var(--cyan);opacity:0;transition:opacity .3s}
+.flash.show{opacity:1}
+
+/* ══════════ COMPETITOR TABLE ═══════════════════════════ */
+.ctab{width:100%;border-collapse:collapse}
+.ctab th{font-family:var(--f-mono);font-size:7px;color:var(--fog);letter-spacing:1.5px;text-transform:uppercase;text-align:left;padding:6px 10px;border-bottom:1px solid var(--e1)}
+.ctab td{padding:7px 10px;border-bottom:1px solid var(--e1);font-family:var(--f-mono);font-size:9px;color:var(--mist)}
+.ctab tr:last-child td{border-bottom:none}
+.ctab tr:hover td{background:var(--s2);color:var(--snow)}
+.cn{color:var(--snow)!important;font-weight:500}
+.th-high{color:var(--red)!important;font-weight:600}
+.th-med{color:var(--gold)!important}
+.th-low{color:var(--lime)!important}
+
+/* ══════════ RESPONSIVE ═════════════════════════════════ */
+@media(max-width:1100px){.g6,.g7{grid-template-columns:repeat(3,1fr)}.g5{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:800px){
+  .g4{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:1fr 1fr}
+  .g2{grid-template-columns:1fr}.msum{grid-template-columns:repeat(2,1fr);row-gap:7px}
+  .mi:nth-child(2){border-right:none}
+  .ticker{flex-wrap:wrap}.tik{border-right:none;padding:4px 0;min-width:40%}
+  .topnav{flex-direction:column;text-align:center}
+}
+@media(max-width:520px){.g6,.g7,.g5,.g4{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="bg-wrap bg-glow"></div>
+<div class="bg-wrap bg-grid"></div>
+<div class="bg-wrap bg-scan"></div>
+
+<div class="page">
+
+<!-- ████ TOP NAV ████████████████████████████████████████ -->
+<div class="topnav">
+  <div class="brand">
+    <div class="brand-logo">❄</div>
+    <div>
+      <div class="brand-name">HVAC Command Center</div>
+      <div class="brand-sub">Fuquay-Varina · Angier · Holly Springs, NC · Sure Start Franchise</div>
+    </div>
+  </div>
+  <div class="nav-pills">
+    <div class="pill pill-live"><span class="pulsedot"></span>Live</div>
+    <div class="pill pill-gold">Opens Apr 27, 2026</div>
+    <div class="pill">Goal: $1.2M</div>
+    <div class="pill">2 Trucks · 2 Techs</div>
+    <div class="pill">Market Share: 9.7%</div>
+  </div>
+  <div class="nav-clock">
+    <div class="clockface" id="clock">00:00:00</div>
+    <div class="clockdate" id="cdate">—</div>
+  </div>
+</div>
+
+<!-- ████ SETTINGS ███████████████████████████████████████ -->
+<button class="stg-btn" id="stgBtn" onclick="toggleStg()">⚙ Settings <span class="stg-arr">▼</span></button>
+<div class="stg-panel" id="stgPanel">
+  <div class="sg">
+    <div class="sf"><label>Daily Target ($)</label><input type="number" id="sD" placeholder="3333"></div>
+    <div class="sf"><label>Monthly Target ($)</label><input type="number" id="sM" placeholder="100000"></div>
+    <div class="sf"><label>Annual Target ($)</label><input type="number" id="sA" placeholder="1200000"></div>
+    <div class="sf"><label>Joe Monthly Target ($)</label><input type="number" id="sJ" placeholder="50000"></div>
+    <div class="sf"><label>Harry Monthly Target ($)</label><input type="number" id="sH" placeholder="50000"></div>
+    <div class="sf"><label>Work Start (24h)</label><input type="time" id="sWS"></div>
+    <div class="sf"><label>Work End (24h)</label><input type="time" id="sWE"></div>
+  </div>
+  <div class="brow">
+    <button class="bp" onclick="saveStg()">💾 Save Settings</button>
+    <button class="bg" onclick="resetStg()">Reset</button>
+    <span class="flash" id="flash">✓ Saved to browser</span>
+  </div>
+</div>
+
+<!-- ████ LIVE TICKER ████████████████████████████████████ -->
+<div class="ticker">
+  <div class="tik"><div class="tik-v" id="tkToday" style="color:var(--cyan)">$0</div><div class="tik-l">Today Earned</div></div>
+  <div class="tik"><div class="tik-v" id="tkLeft" style="color:var(--gold)">$0</div><div class="tik-l">Today Remaining</div></div>
+  <div class="tik"><div class="tik-v" id="tkRate" style="color:var(--blue)">$0/hr</div><div class="tik-l">Earning Rate</div></div>
+  <div class="tik"><div class="tik-v" id="tkElapsed" style="color:var(--violet)">0h 0m</div><div class="tik-l">Work Elapsed</div></div>
+  <div class="tik"><div class="tik-v" id="tkDays" style="color:var(--orange)">—</div><div class="tik-l">Days Since Launch</div></div>
+  <div class="tik"><div class="tik-v" id="tkStatus">—</div><div class="tik-l">Track Status</div></div>
+</div>
+
+<!-- ████ SECTION 1: KPI COMMAND CENTER ██████████████████ -->
+<div class="sec-hdr open" onclick="toggleSec('kpiB',this)" style="margin-top:0">
+  <div class="sec-l">
+    <div class="sec-dot" style="background:var(--cyan)"></div>
+    <span class="sec-ttl">KPI Command Center</span>
+    <span class="sec-badge">Daily · Monthly · Annual Targets + Live Progress</span>
+  </div>
+  <span class="sec-arr">▲</span>
+</div>
+<div class="sec-body open" id="kpiB">
+
+  <!-- Daily activity targets -->
+  <div class="g6 mb10">
+    <div class="kc ac">
+      <div class="kc-l">Daily Repair Jobs</div>
+      <div class="kc-v">2.3</div>
+      <div class="kc-s"><b>50/mo</b> · $400 avg</div>
+    </div>
+    <div class="kc ag">
+      <div class="kc-l">Daily Replace Jobs</div>
+      <div class="kc-v">0.32</div>
+      <div class="kc-s"><b>7/mo</b> · $11,500 avg</div>
+    </div>
+    <div class="kc ab">
+      <div class="kc-l">Daily Appointments</div>
+      <div class="kc-v">3.24</div>
+      <div class="kc-s"><b>2.84</b> repair + <b>0.40</b> replace</div>
+    </div>
+    <div class="kc av">
+      <div class="kc-l">Inbound Calls/Day</div>
+      <div class="kc-v">4.05</div>
+      <div class="kc-s">80% → booked appointment</div>
+    </div>
+    <div class="kc ao">
+      <div class="kc-l">Leads Needed/Day</div>
+      <div class="kc-v">5.4</div>
+      <div class="kc-s">60% lead → appointment</div>
+    </div>
+    <div class="kc ar">
+      <div class="kc-l">Door Knocks/Day</div>
+      <div class="kc-v">180</div>
+      <div class="kc-s">3% knock → lead</div>
+    </div>
+  </div>
+
+  <!-- Live progress bars -->
+  <div class="g4 mb10">
+    <div class="kc ac">
+      <div class="kc-l">Monthly Goal</div>
+      <div class="kc-v" id="mEarn">$0</div>
+      <div class="kc-bar"><div class="kc-fill" id="mBar" style="width:0%"></div></div>
+      <div class="kc-pct" id="mPct">0%</div>
+      <div class="kc-s">Left: <b id="mLeft">$100,000</b></div>
+    </div>
+    <div class="kc ag">
+      <div class="kc-l">Quarterly Goal</div>
+      <div class="kc-v" id="qEarn">$0</div>
+      <div class="kc-bar"><div class="kc-fill" id="qBar" style="width:0%"></div></div>
+      <div class="kc-pct" id="qPct">0%</div>
+      <div class="kc-s">Left: <b id="qLeft">$300,000</b></div>
+    </div>
+    <div class="kc ar">
+      <div class="kc-l">Annual Goal ($1.2M)</div>
+      <div class="kc-v" id="yEarn">$0</div>
+      <div class="kc-bar"><div class="kc-fill" id="yBar" style="width:0%"></div></div>
+      <div class="kc-pct" id="yPct">0%</div>
+      <div class="kc-s">Left: <b id="yLeft">$1,200,000</b></div>
+    </div>
+    <div class="kc ab">
+      <div class="kc-l">Year Progress (Apr–Apr)</div>
+      <div class="kc-v" id="yrV">0%</div>
+      <div class="kc-bar"><div class="kc-fill" id="yrBar" style="width:0%"></div></div>
+      <div class="kc-pct" id="yrD">of 365 days</div>
+      <div class="kc-s">Apr 27, 2026 → Apr 27, 2027</div>
+    </div>
+  </div>
+
+  <!-- Funnel + breakdown side by side -->
+  <div class="g2 mb10">
+    <div class="panel">
+      <div class="ph">Activity Funnel — Daily Numbers to Hit $100K/Month</div>
+      <div class="fn-row">
+        <div class="fn-lbl">Door Knocks</div>
+        <div class="fn-track"><div class="fn-fill" style="background:var(--red);width:100%">180 / day</div></div>
+        <div class="fn-num" style="color:var(--red)">180</div>
+      </div>
+      <div class="fn-mid">↓ 3% knock-to-lead</div>
+      <div class="fn-row">
+        <div class="fn-lbl">Leads</div>
+        <div class="fn-track"><div class="fn-fill" style="background:var(--orange);width:30%">5.4 / day</div></div>
+        <div class="fn-num" style="color:var(--orange)">5.4</div>
+      </div>
+      <div class="fn-mid">↓ 60% lead-to-appointment</div>
+      <div class="fn-row">
+        <div class="fn-lbl">Inbound Calls</div>
+        <div class="fn-track"><div class="fn-fill" style="background:var(--gold);width:22%">4.05 / day</div></div>
+        <div class="fn-num" style="color:var(--gold)">4.05</div>
+      </div>
+      <div class="fn-mid">↓ 80% inbound → booked</div>
+      <div class="fn-row">
+        <div class="fn-lbl">Booked Appts</div>
+        <div class="fn-track"><div class="fn-fill" style="background:var(--blue);width:18%">3.24 / day</div></div>
+        <div class="fn-num" style="color:var(--blue)">3.24</div>
+      </div>
+      <div class="fn-mid">↓ 80% close rate</div>
+      <div class="fn-row">
+        <div class="fn-lbl">Jobs Closed ✓</div>
+        <div class="fn-track"><div class="fn-fill" style="background:var(--cyan);width:14%">2.59 / day</div></div>
+        <div class="fn-num" style="color:var(--cyan)">2.59</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="ph">Revenue Breakdown</div>
+      <div class="g2 mb10" style="gap:7px">
+        <div class="kc ac" style="padding:10px 11px">
+          <div class="kc-l">Mo. Repair Rev</div>
+          <div class="kc-v" style="font-size:20px">$20,000</div>
+          <div class="kc-s">50 jobs · <b>2.27/day</b></div>
+        </div>
+        <div class="kc ag" style="padding:10px 11px">
+          <div class="kc-l">Mo. Replace Rev</div>
+          <div class="kc-v" style="font-size:20px">$80,000</div>
+          <div class="kc-s">7 jobs · <b>0.32/day</b></div>
+        </div>
+        <div class="kc ab" style="padding:10px 11px">
+          <div class="kc-l">Annual Repair</div>
+          <div class="kc-v" style="font-size:20px">$240K</div>
+          <div class="kc-s">600 jobs/yr</div>
+        </div>
+        <div class="kc ar" style="padding:10px 11px">
+          <div class="kc-l">Annual Replace</div>
+          <div class="kc-v" style="font-size:20px">$960K</div>
+          <div class="kc-s">84 jobs/yr</div>
+        </div>
+      </div>
+      <div class="g3" style="gap:7px">
+        <div class="kc ac" style="padding:10px 11px">
+          <div class="kc-l">Mo. Repair Appts</div>
+          <div class="kc-v" style="font-size:20px">62.5</div>
+          <div class="kc-s">to close 50 jobs</div>
+        </div>
+        <div class="kc ag" style="padding:10px 11px">
+          <div class="kc-l">Mo. Replace Appts</div>
+          <div class="kc-v" style="font-size:20px">8.7</div>
+          <div class="kc-s">to close 7 jobs</div>
+        </div>
+        <div class="kc av" style="padding:10px 11px">
+          <div class="kc-l">Monthly Inbound</div>
+          <div class="kc-v" style="font-size:20px">89</div>
+          <div class="kc-s">calls/mo</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pace row -->
+  <div class="g6">
+    <div class="kc ac"><div class="kc-l">$/Minute Today</div><div class="kc-v" id="perMin">$0</div></div>
+    <div class="kc ag"><div class="kc-l">$/Day Needed (Mo)</div><div class="kc-v" id="needDay">—</div></div>
+    <div class="kc ab"><div class="kc-l">Days Left Month</div><div class="kc-v" id="dlMo">—</div></div>
+    <div class="kc av"><div class="kc-l">Days Left Quarter</div><div class="kc-v" id="dlQ">—</div></div>
+    <div class="kc ao"><div class="kc-l">Days Left Year</div><div class="kc-v" id="dlY">—</div></div>
+    <div class="kc ar">
+      <div class="kc-l">Market Share Target</div>
+      <div class="kc-v">9.7%</div>
+      <div class="kc-s"><b>57</b> of 585 jobs/mo</div>
+    </div>
+  </div>
+</div>
+
+<!-- ████ SECTION 2: TECH TRACKER ████████████████████████ -->
+<div class="sec-hdr open" onclick="toggleSec('techB',this)">
+  <div class="sec-l">
+    <div class="sec-dot" style="background:var(--violet)"></div>
+    <span class="sec-ttl">Technician & Truck Tracker</span>
+    <span class="sec-badge">Joe + Harry · 2 Trucks · Monthly Job Log</span>
+  </div>
+  <span class="sec-arr">▲</span>
+</div>
+<div class="sec-body open" id="techB">
+  <div class="g2 mb10">
+    <div class="panel">
+      <div class="ph">Truck 1 — Joe Tech</div>
+      <div class="tc tj">
+        <div class="tc-row">
+          <span class="tc-name">⚡ Joe Tech</span>
+          <span class="tc-amt" id="joeAmt">$0</span>
+        </div>
+        <div class="mini">
+          <div class="ms"><div class="ms-v" id="joeJ">0</div><div class="ms-l">Jobs</div></div>
+          <div class="ms"><div class="ms-v" id="joeR">0</div><div class="ms-l">Repairs</div></div>
+          <div class="ms"><div class="ms-v" id="joeP">0</div><div class="ms-l">Replaces</div></div>
+        </div>
+        <div class="tc-inp">
+          <select class="t-sel" id="jT" onchange="toggleCust('joe')">
+            <option value="repair">Repair — $400</option>
+            <option value="replace">Replace — $11,500</option>
+            <option value="custom">Custom Amount $</option>
+          </select>
+          <input class="t-num" type="number" id="jC" placeholder="Enter $">
+          <button class="t-btn" onclick="addJob('joe')">+ Add</button>
+        </div>
+        <div class="tc-prog"><div class="tc-pbar" id="jBar" style="width:0%"></div></div>
+        <div class="tc-foot"><span id="jPct">0% of target</span><span id="jTgt">Target: $50,000</span></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="ph">Truck 2 — Harry Tech</div>
+      <div class="tc th">
+        <div class="tc-row">
+          <span class="tc-name">🔧 Harry Tech</span>
+          <span class="tc-amt" id="harryAmt">$0</span>
+        </div>
+        <div class="mini">
+          <div class="ms"><div class="ms-v" id="harryJ">0</div><div class="ms-l">Jobs</div></div>
+          <div class="ms"><div class="ms-v" id="harryR">0</div><div class="ms-l">Repairs</div></div>
+          <div class="ms"><div class="ms-v" id="harryP">0</div><div class="ms-l">Replaces</div></div>
+        </div>
+        <div class="tc-inp">
+          <select class="t-sel" id="hT" onchange="toggleCust('harry')">
+            <option value="repair">Repair — $400</option>
+            <option value="replace">Replace — $11,500</option>
+            <option value="custom">Custom Amount $</option>
+          </select>
+          <input class="t-num" type="number" id="hC" placeholder="Enter $">
+          <button class="t-btn" onclick="addJob('harry')">+ Add</button>
+        </div>
+        <div class="tc-prog"><div class="tc-pbar" id="hBar" style="width:0%"></div></div>
+        <div class="tc-foot"><span id="hPct">0% of target</span><span id="hTgt">Target: $50,000</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="panel">
+      <div class="ph">Team Combined vs Monthly Goal</div>
+      <div class="combo-bar"><div class="cb-j" id="cbJ" style="width:0%"></div><div class="cb-h" id="cbH" style="width:0%"></div></div>
+      <div class="leg">
+        <div class="li"><div class="lid" style="background:var(--cyan)"></div>Joe: <b id="jLeg" style="color:var(--cyan);margin-left:3px">$0</b></div>
+        <div class="li"><div class="lid" style="background:var(--violet)"></div>Harry: <b id="hLeg" style="color:var(--violet);margin-left:3px">$0</b></div>
+        <div class="li" style="margin-left:auto;color:var(--snow);font-weight:600" id="teamTot">$0 combined</div>
+      </div>
+      <div class="mini4">
+        <div class="ms"><div class="ms-v" id="tJ">0</div><div class="ms-l">Total Jobs</div></div>
+        <div class="ms"><div class="ms-v" id="tR">0</div><div class="ms-l">Repairs</div></div>
+        <div class="ms"><div class="ms-v" id="tP">0</div><div class="ms-l">Replaces</div></div>
+        <div class="ms"><div class="ms-v" id="tAvg">$0</div><div class="ms-l">Avg Job</div></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="ph">Job Log — This Month <button class="bg bg-sm" onclick="clearJobs()">Clear</button></div>
+      <div class="jlog" id="jobLog"><div class="jlog-empty">No jobs yet. Use + Add above.</div></div>
+      <div style="font-family:var(--f-mono);font-size:7px;color:var(--fog);margin-top:6px" id="jCount"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ████ SECTION 3: MARKETING (collapsed) ████████████████ -->
+<div class="sec-hdr" onclick="toggleSec('mktB',this)">
+  <div class="sec-l">
+    <div class="sec-dot" style="background:var(--blue)"></div>
+    <span class="sec-ttl">Marketing Budget & ROI Tracker</span>
+    <span class="sec-badge">$114K/yr · 7 Channels · Ad Spend + Revenue Tracking · Click to Expand</span>
+  </div>
+  <span class="sec-arr">▼</span>
+</div>
+<div class="sec-body" id="mktB">
+
+  <div class="msum">
+    <div class="mi"><div class="mi-l">Annual Budget</div><div class="mi-v mg-txt">$114,000</div></div>
+    <div class="mi"><div class="mi-l">Monthly Budget</div><div class="mi-v mc-txt">$9,500</div></div>
+    <div class="mi"><div class="mi-l">Total Spent (tracked)</div><div class="mi-v mg-txt" id="mktSpend">$0</div></div>
+    <div class="mi"><div class="mi-l">Revenue Attributed</div><div class="mi-v mc-txt" id="mktRev">$0</div></div>
+    <div class="mi"><div class="mi-l">Overall ROI</div><div class="mi-v ml-txt" id="mktROI">—</div></div>
+  </div>
+  <div class="msum" style="margin-bottom:10px">
+    <div class="mi"><div class="mi-l">Budget Remaining</div><div class="mi-v" id="mktLeft">Set budgets ↓</div></div>
+    <div class="mi"><div class="mi-l">LSA (Top Channel)</div><div class="mi-v mc-txt">$45,144/yr</div></div>
+    <div class="mi"><div class="mi-l">PPC</div><div class="mi-v">$28,386/yr</div></div>
+    <div class="mi"><div class="mi-l">Lead Aggregators</div><div class="mi-v">$12,084/yr</div></div>
+    <div class="mi"><div class="mi-l">Mkt % of Revenue</div><div class="mi-v">9.5%</div></div>
+  </div>
+
+  <div class="g7 mb10">
+    <!-- PPC 24.9% → $28,386/yr → $2,366/mo -->
+    <div class="mc mc-ppc">
+      <div class="mc-ch">PPC Google Ads</div>
+      <div class="mc-pct">24.9% · $2,366/mo · $28,386/yr</div>
+      <div class="mc-rv" id="ppcRev">$0</div>
+      <div class="mc-roi roi-u" id="ppcROI">Enter spend to see ROI</div>
+      <div class="mc-fi">
+        <div class="fi"><label>Budget</label><input class="bf" type="number" id="ppcB" placeholder="2366" oninput="saveMkt()"></div>
+        <div class="fi"><label>Ad Spend</label><input type="number" id="ppcS" placeholder="actual $" oninput="saveMkt()"></div>
+        <div class="fi"><label>Revenue</label><input type="number" id="ppcR" placeholder="from PPC" oninput="saveMkt()"></div>
+      </div>
+    </div>
+    <!-- LSA 39.6% → $45,144/yr → $3,762/mo -->
+    <div class="mc mc-lsa">
+      <div class="mc-ch">Google LSA</div>
+      <div class="mc-pct">39.6% · $3,762/mo · $45,144/yr</div>
+      <div class="mc-rv" id="lsaRev">$0</div>
+      <div class="mc-roi roi-u" id="lsaROI">Enter spend to see ROI</div>
+      <div class="mc-fi">
+        <div class="fi"><label>Budget</label><input class="bf" type="number" id="lsaB" placeholder="3762" oninput="saveMkt()"></div>
+        <div class="fi"><label>Ad Spend</label><input type="number" id="lsaS" placeholder="actual $" oninput="saveMkt()"></div>
+        <div class="fi"><label>Revenue</label><input type="number" id="lsaR" placeholder="from LSA" oninput="saveMkt()"></div>
+      </div>
+    </div>
+    <!-- Lead Agg 10.6% → $12,084/yr → $1,007/mo -->
+    <div class="mc mc-agg">
+      <div class="mc-ch">Lead Aggregators</div>
+      <div class="mc-pct">10.6% · $1,007/mo · $12,084/yr</div>
+      <div class="mc-rv" id="aggRev">$0</div>
+      <div class="mc-roi roi-u" id="aggROI">Enter spend to see ROI</div>
+      <div class="mc-fi">
+        <div class="fi"><label>Budget</label><input class="bf" type="number" id="aggB" placeholder="1007" oninput="saveMkt()"></div>
+        <div class="fi"><label>Ad Spend</label><input type="number" id="aggS" placeholder="actual $" oninput="saveMkt()"></div>
+        <div class="fi"><label>Revenue</label><input type="number" id="aggR" placeholder="from Angi/HA" oninput="saveMkt()"></div>
+      </div>
+    </div>
+    <!-- GBP 4.4% → $5,016/yr → $418/mo -->
+    <div class="mc mc-gbp">
+      <div class="mc-ch">GBP Optimization</div>
+      <div class="mc-pct">4.4% · $418/mo · $5,016/yr</div>
+      <div class="mc-rv" id="gbpRev">$0</div>
+      <div class="mc-roi roi-u" id="gbpROI">Enter spend to see ROI</div>
+      <div class="mc-fi">
+        <div class="fi"><label>Budget</label><input class="bf" type="number" id="gbpB" placeholder="418" oninput="saveMkt()"></div>
+        <div class="fi"><label>Ad Spend</label><input type="number" id="gbpS" placeholder="actual $" oninput="saveMkt()"></div>
+        <div class="fi"><label>Revenue</label><input type="number" id="gbpR" placeholder="from GBP" oninput="saveMkt()"></div>
+      </div>
+    </div>
+    <!-- SEO 7.3% → $8,322/yr → $694/mo -->
+    <div class="mc mc-seo">
+      <div class="mc-ch">Local SEO</div>
+      <div class="mc-pct">7.3% · $694/mo · $8,322/yr</div>
+      <div class="mc-rv" id="seoRev">$0</div>
+      <div class="mc-roi roi-u" id="seoROI">Enter spend to see ROI</div>
+      <div class="mc-fi">
+        <div class="fi"><label>Budget</label><input class="bf" type="number" id="seoB" placeholder="694" oninput="saveMkt()"></div>
+        <div class="fi"><label>Ad Spend</label><input type="number" id="seoS" placeholder="actual $" oninput="saveMkt()"></div>
+        <div class="fi"><label>Revenue</label><input type="number" id="seoR" placeholder="from SEO" oninput="saveMkt()"></div>
+      </div>
+    </div>
+    <!-- Direct Mail 5.9% → $6,726/yr → $560/mo -->
+    <div class="mc mc-mail">
+      <div class="mc-ch">Direct Mail</div>
+      <div class="mc-pct">5.9% · $560/mo · $6,726/yr</div>
+      <div class="mc-rv" id="mailRev">$0</div>
+      <div class="mc-roi roi-u" id="mailROI">Enter spend to see ROI</div>
+      <div class="mc-fi">
+        <div class="fi"><label>Budget</label><input class="bf" type="number" id="mailB" placeholder="560" oninput="saveMkt()"></div>
+        <div class="fi"><label>Ad Spend</label><input type="number" id="mailS" placeholder="actual $" oninput="saveMkt()"></div>
+        <div class="fi"><label>Revenue</label><input type="number" id="mailR" placeholder="from mail" oninput="saveMkt()"></div>
+      </div>
+    </div>
+    <!-- Community 7.3% → $8,322/yr → $694/mo -->
+    <div class="mc mc-comm">
+      <div class="mc-ch">Community Groups</div>
+      <div class="mc-pct">7.3% · $694/mo · $8,322/yr</div>
+      <div class="mc-rv" id="commRev">$0</div>
+      <div class="mc-roi roi-u" id="commROI">Enter spend to see ROI</div>
+      <div class="mc-fi">
+        <div class="fi"><label>Budget</label><input class="bf" type="number" id="commB" placeholder="694" oninput="saveMkt()"></div>
+        <div class="fi"><label>Ad Spend</label><input type="number" id="commS" placeholder="actual $" oninput="saveMkt()"></div>
+        <div class="fi"><label>Revenue</label><input type="number" id="commR" placeholder="from community" oninput="saveMkt()"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ████ SECTION 4: COMPETITORS TOP 5 (collapsed) ████████ -->
+<div class="sec-hdr" onclick="toggleSec('compB',this)">
+  <div class="sec-l">
+    <div class="sec-dot" style="background:var(--red)"></div>
+    <span class="sec-ttl">Top 5 Competitors — Est. Annual Revenue</span>
+    <span class="sec-badge">Fuquay-Varina · Angier · Holly Springs · Click to Expand</span>
+  </div>
+  <span class="sec-arr">▼</span>
+</div>
+<div class="sec-body" id="compB">
+  <div class="g5 mb10">
+    <!-- #1 Carolina Comfort Air -->
+    <div class="comp-card comp1">
+      <div class="comp-rank">#1</div>
+      <div class="comp-name">Carolina Comfort Air</div>
+      <div class="comp-area">Holly Springs · Clayton Area</div>
+      <div class="comp-rev">$18–25M</div>
+      <div class="comp-label">Est. Annual Revenue 2024</div>
+      <div class="comp-stats">
+        <div class="comp-stat"><span class="cs-l">Est. Trucks</span><span class="cs-v">40–60</span></div>
+        <div class="comp-stat"><span class="cs-l">Founded</span><span class="cs-v">2007</span></div>
+        <div class="comp-stat"><span class="cs-l">Units Installed</span><span class="cs-v">50,000+</span></div>
+        <div class="comp-stat"><span class="cs-l">Staff</span><span class="cs-v">300+</span></div>
+        <div class="comp-stat"><span class="cs-l">Brand</span><span class="cs-v">Trane Certified</span></div>
+      </div>
+      <div class="comp-threat threat-h">HIGH THREAT</div>
+      <div class="comp-bar-wrap">
+        <div class="comp-bar-lbl"><span>Market Dominance</span><span>~35%</span></div>
+        <div class="comp-bar-track"><div class="comp-bar-fill" style="width:85%"></div></div>
+      </div>
+    </div>
+    <!-- #2 Service Medic -->
+    <div class="comp-card comp2">
+      <div class="comp-rank">#2</div>
+      <div class="comp-name">Service Medic H&A</div>
+      <div class="comp-area">Holly Springs · Fuquay · Angier</div>
+      <div class="comp-rev">$4–8M</div>
+      <div class="comp-label">Est. Annual Revenue 2024</div>
+      <div class="comp-stats">
+        <div class="comp-stat"><span class="cs-l">Est. Trucks</span><span class="cs-v">8–15</span></div>
+        <div class="comp-stat"><span class="cs-l">Coverage</span><span class="cs-v">All 3 cities</span></div>
+        <div class="comp-stat"><span class="cs-l">Rating</span><span class="cs-v">Forbes Top Rated</span></div>
+        <div class="comp-stat"><span class="cs-l">Offer</span><span class="cs-v">Free diagnosis</span></div>
+        <div class="comp-stat"><span class="cs-l">Speed</span><span class="cs-v">Same-day service</span></div>
+      </div>
+      <div class="comp-threat threat-h">HIGH THREAT</div>
+      <div class="comp-bar-wrap">
+        <div class="comp-bar-lbl"><span>Market Share Est.</span><span>~12%</span></div>
+        <div class="comp-bar-track"><div class="comp-bar-fill" style="width:55%"></div></div>
+      </div>
+    </div>
+    <!-- #3 Ideal Services -->
+    <div class="comp-card comp3">
+      <div class="comp-rank">#3</div>
+      <div class="comp-name">Ideal Services H&C</div>
+      <div class="comp-area">Holly Springs Region</div>
+      <div class="comp-rev">$3–6M</div>
+      <div class="comp-label">Est. Annual Revenue 2024</div>
+      <div class="comp-stats">
+        <div class="comp-stat"><span class="cs-l">Est. Trucks</span><span class="cs-v">6–12</span></div>
+        <div class="comp-stat"><span class="cs-l">Years in Biz</span><span class="cs-v">20+</span></div>
+        <div class="comp-stat"><span class="cs-l">Services</span><span class="cs-v">Multi-service</span></div>
+        <div class="comp-stat"><span class="cs-l">Customer Base</span><span class="cs-v">Very loyal</span></div>
+        <div class="comp-stat"><span class="cs-l">Online Presence</span><span class="cs-v">Strong</span></div>
+      </div>
+      <div class="comp-threat threat-h">HIGH THREAT</div>
+      <div class="comp-bar-wrap">
+        <div class="comp-bar-lbl"><span>Market Share Est.</span><span>~9%</span></div>
+        <div class="comp-bar-track"><div class="comp-bar-fill" style="width:44%"></div></div>
+      </div>
+    </div>
+    <!-- #4 Austin Heating & Air -->
+    <div class="comp-card comp4">
+      <div class="comp-rank">#4</div>
+      <div class="comp-name">Austin Heating & Air</div>
+      <div class="comp-area">Fuquay-Varina · Holly Springs</div>
+      <div class="comp-rev">$1.5–3M</div>
+      <div class="comp-label">Est. Annual Revenue 2024</div>
+      <div class="comp-stats">
+        <div class="comp-stat"><span class="cs-l">Est. Trucks</span><span class="cs-v">4–7</span></div>
+        <div class="comp-stat"><span class="cs-l">Type</span><span class="cs-v">Local hometown</span></div>
+        <div class="comp-stat"><span class="cs-l">Reputation</span><span class="cs-v">Strong local</span></div>
+        <div class="comp-stat"><span class="cs-l">Focus</span><span class="cs-v">Residential</span></div>
+        <div class="comp-stat"><span class="cs-l">Pricing</span><span class="cs-v">Competitive</span></div>
+      </div>
+      <div class="comp-threat threat-m">MED THREAT</div>
+      <div class="comp-bar-wrap">
+        <div class="comp-bar-lbl"><span>Market Share Est.</span><span>~5%</span></div>
+        <div class="comp-bar-track"><div class="comp-bar-fill" style="width:30%"></div></div>
+      </div>
+    </div>
+    <!-- #5 Bar-Co Mechanical -->
+    <div class="comp-card comp5">
+      <div class="comp-rank">#5</div>
+      <div class="comp-name">Bar-Co Mechanical</div>
+      <div class="comp-area">Fuquay-Varina · Wake County</div>
+      <div class="comp-rev">$1–2.5M</div>
+      <div class="comp-label">Est. Annual Revenue 2024</div>
+      <div class="comp-stats">
+        <div class="comp-stat"><span class="cs-l">Est. Trucks</span><span class="cs-v">3–6</span></div>
+        <div class="comp-stat"><span class="cs-l">Founded</span><span class="cs-v">1996</span></div>
+        <div class="comp-stat"><span class="cs-l">Type</span><span class="cs-v">Family-owned</span></div>
+        <div class="comp-stat"><span class="cs-l">Focus</span><span class="cs-v">Res + Commercial</span></div>
+        <div class="comp-stat"><span class="cs-l">Brand Strength</span><span class="cs-v">Established</span></div>
+      </div>
+      <div class="comp-threat threat-m">MED THREAT</div>
+      <div class="comp-bar-wrap">
+        <div class="comp-bar-lbl"><span>Market Share Est.</span><span>~4%</span></div>
+        <div class="comp-bar-track"><div class="comp-bar-fill" style="width:24%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Full competitor table + market data -->
+  <div class="g2">
+    <div class="panel">
+      <div class="ph">All Known Competitors — Fuquay · Angier · Holly Springs</div>
+      <table class="ctab">
+        <thead><tr><th>Company</th><th>Coverage Area</th><th>Key Strength</th><th>Threat</th></tr></thead>
+        <tbody>
+          <tr><td class="cn">Carolina Comfort Air</td><td>Holly Springs</td><td>Trane certified · 50K+ installs · 300 staff</td><td class="th-high">HIGH</td></tr>
+          <tr><td class="cn">Service Medic H&A</td><td>All 3 cities</td><td>Forbes rated · Free diagnosis · Fast</td><td class="th-high">HIGH</td></tr>
+          <tr><td class="cn">Ideal Services H&C</td><td>Holly Springs</td><td>20+ yrs · Multi-service · Loyal base</td><td class="th-high">HIGH</td></tr>
+          <tr><td class="cn">Austin Heating & Air</td><td>Fuquay / Holly Spgs</td><td>Local brand · Strong community rep</td><td class="th-med">MED</td></tr>
+          <tr><td class="cn">Bar-Co Mechanical</td><td>Fuquay / Wake Co.</td><td>Family since 1996 · Known brand</td><td class="th-med">MED</td></tr>
+          <tr><td class="cn">Wayne Bryant HVAC</td><td>Fuquay / Angier</td><td>Bryant/Goodman certified · Local</td><td class="th-med">MED</td></tr>
+          <tr><td class="cn">North Pole HVAC</td><td>Holly Springs</td><td>Growing fast · Top-rated reviews</td><td class="th-med">MED</td></tr>
+          <tr><td class="cn">Ashworth's H&C</td><td>Fuquay-Varina</td><td>Residential + commercial local</td><td class="th-med">MED</td></tr>
+          <tr><td class="cn">Holly Springs H&A</td><td>Holly Springs</td><td>Repair-first · Community trust</td><td class="th-low">LOW</td></tr>
+          <tr><td class="cn">Hooah Heating & Air</td><td>Holly Springs</td><td>Veteran-owned · 10+ years exp</td><td class="th-low">LOW</td></tr>
+          <tr><td class="cn">Kip Underwood HVAC</td><td>Fuquay-Varina</td><td>Solo op · Word-of-mouth only</td><td class="th-low">LOW</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="panel">
+      <div class="ph" style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <span>Your Market — Territory Intelligence</span>
+        <div class="donut-wrap">
+          <svg width="86" height="86" viewBox="0 0 86 86">
+            <circle cx="43" cy="43" r="30" fill="none" stroke="#1B3048" stroke-width="10"/>
+            <circle cx="43" cy="43" r="30" fill="none" stroke="#00F5C4" stroke-width="10"
+              stroke-dasharray="188.5" stroke-dashoffset="170.2" stroke-linecap="round"/>
+          </svg>
+          <div class="donut-mid"><div class="donut-v">9.7%</div><div class="donut-l">SHARE</div></div>
+        </div>
+      </div>
+      <div class="msr"><div class="msr-l">Market Population</div><div class="msr-v">111,972</div></div>
+      <div class="msr"><div class="msr-l">Total Homes in Territory</div><div class="msr-v">42,095</div></div>
+      <div class="msr"><div class="msr-l">Avg Household Size</div><div class="msr-v">2.66 persons</div></div>
+      <div class="msr"><div class="msr-l">Total Annual HVAC Jobs (Market)</div><div class="msr-v">7,016</div></div>
+      <div class="msr"><div class="msr-l">Jobs Available / Month</div><div class="msr-v">585</div></div>
+      <div class="msr"><div class="msr-l">Jobs YOU Need / Month</div><div class="msr-v" style="color:var(--cyan)">57 (9.7% share)</div></div>
+      <div class="msr"><div class="msr-l">Repair Jobs / Month</div><div class="msr-v" style="color:var(--cyan)">50</div></div>
+      <div class="msr"><div class="msr-l">Replacement Jobs / Month</div><div class="msr-v" style="color:var(--gold)">7</div></div>
+      <div class="msr"><div class="msr-l">Revenue Leverage Point</div><div class="msr-v" style="color:var(--gold)">7 replaces = $80K</div></div>
+      <div class="msr"><div class="msr-l">Angier Opportunity</div><div class="msr-v" style="color:var(--lime)">UNDERSERVED — WIDE OPEN</div></div>
+      <div class="msr"><div class="msr-l">Marketing Budget (w/ NAF)</div><div class="msr-v">$114,000/yr · $9,500/mo</div></div>
+      <div class="msr"><div class="msr-l">Launch Date</div><div class="msr-v" style="color:var(--gold)">April 27, 2026</div></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /page -->
+
+<script>
+/* ══════════ HVAC COMMAND CENTER ENGINE ══════════════════
+   Data persists via localStorage + sessionStorage fallback
+══════════════════════════════════════════════════════════ */
+
+const LAUNCH  = new Date('2026-04-27T00:00:00');
+const YEAREND = new Date('2027-04-27T00:00:00');
+const YTOTAL  = Math.round((YEAREND - LAUNCH) / 864e5);
+
+const DEF = {d:3333, m:100000, a:1200000, joe:50000, harry:50000, wsh:8, wsm:0, weh:18, wem:0};
+let C = {...DEF}, jobs = [];
+const MCH = ['ppc','lsa','agg','gbp','seo','mail','comm'];
+let MK = {};
+MCH.forEach(c => MK[c] = {b:0,s:0,r:0});
+
+const KS = {c:'hvc_cfg', j:'hvc_jobs', m:'hvc_mkt'};
+
+// ── Storage ──────────────────────────────────────────────
+function sto(k,v){const s=JSON.stringify(v);[()=>localStorage.setItem(k,s),()=>sessionStorage.setItem(k,s)].forEach(f=>{try{f()}catch(e){}});}
+function ret(k){for(const f of[()=>localStorage.getItem(k),()=>sessionStorage.getItem(k)]){try{const v=f();if(v)return JSON.parse(v);}catch(e){}}return null;}
+function del(k){[()=>localStorage.removeItem(k),()=>sessionStorage.removeItem(k)].forEach(f=>{try{f()}catch(e){}});}
+
+// ── Boot ─────────────────────────────────────────────────
+window.addEventListener('load', () => {
+  C = {...DEF,...(ret(KS.c)||{})};
+  jobs = ret(KS.j)||[];
+  const sm = ret(KS.m); if(sm) MK = sm;
+  syncStgUI(); syncMktInputs(); renderLog(); updateTech(); updateMkt();
+  tick(); setInterval(tick, 1000);
+});
+
+// ── Accordion ────────────────────────────────────────────
+function toggleSec(id, hdr){
+  const b=document.getElementById(id), o=b.classList.toggle('open');
+  hdr.classList.toggle('open',o);
+  hdr.querySelector('.sec-arr').textContent = o?'▲':'▼';
+}
+
+// ── Settings ─────────────────────────────────────────────
+function toggleStg(){
+  const p=document.getElementById('stgPanel'), b=document.getElementById('stgBtn');
+  const o=p.classList.toggle('open'); b.classList.toggle('open',o);
+}
+function syncStgUI(){
+  const sv=(id,v)=>{const e=document.getElementById(id);if(e)e.value=v};
+  sv('sD',C.d); sv('sM',C.m); sv('sA',C.a); sv('sJ',C.joe); sv('sH',C.harry);
+  sv('sWS',pad(C.wsh)+':'+pad(C.wsm)); sv('sWE',pad(C.weh)+':'+pad(C.wem));
+}
+function saveStg(){
+  const g=id=>parseFloat(document.getElementById(id)?.value)||0;
+  C.d=g('sD')||DEF.d; C.m=g('sM')||DEF.m; C.a=g('sA')||DEF.a;
+  C.joe=g('sJ')||DEF.joe; C.harry=g('sH')||DEF.harry;
+  const[sh,sm]=(document.getElementById('sWS')?.value||'8:00').split(':').map(Number);
+  const[eh,em]=(document.getElementById('sWE')?.value||'18:00').split(':').map(Number);
+  C.wsh=sh; C.wsm=sm; C.weh=eh; C.wem=em;
+  sto(KS.c,C);
+  const fl=document.getElementById('flash');
+  fl.textContent='✓ Saved'; fl.classList.add('show');
+  setTimeout(()=>fl.classList.remove('show'),2000);
+}
+function resetStg(){C={...DEF}; syncStgUI(); del(KS.c);}
+
+// ── Tech custom input toggle ──────────────────────────────
+function toggleCust(t){
+  const sel=document.getElementById(t==='joe'?'jT':'hT');
+  const inp=document.getElementById(t==='joe'?'jC':'hC');
+  if(inp) inp.style.display = sel.value==='custom' ? 'inline-block' : 'none';
+}
+
+// ── Add / Remove Jobs ─────────────────────────────────────
+function addJob(tech){
+  const sel = document.getElementById(tech==='joe'?'jT':'hT');
+  const type = sel?.value || 'repair';
+  let amt = type==='repair'?400 : type==='replace'?11500 : 0;
+  if(type==='custom'){
+    const ci=document.getElementById(tech==='joe'?'jC':'hC');
+    amt=parseFloat(ci?.value)||0;
+    if(!amt){ci?.focus();return;}
+    ci.value='';
+  }
+  jobs.push({tech,amt,type:type==='replace'?'replace':'repair',
+    ts:new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})});
+  sto(KS.j,jobs); renderLog(); updateTech();
+}
+function removeJob(i){jobs.splice(i,1); sto(KS.j,jobs); renderLog(); updateTech();}
+function clearJobs(){if(!confirm('Clear all jobs this month?'))return; jobs=[]; del(KS.j); renderLog(); updateTech();}
+
+function renderLog(){
+  const el=document.getElementById('jobLog');
+  if(!jobs.length){el.innerHTML='<div class="jlog-empty">No jobs yet. Use + Add above.</div>';T('jCount','');return;}
+  el.innerHTML=[...jobs].reverse().map((j,ri)=>{
+    const i=jobs.length-1-ri;
+    const col=j.tech==='joe'?'var(--cyan)':'var(--violet)';
+    const nm=j.tech==='joe'?'⚡ Joe':'🔧 Harry';
+    const badge=j.type==='replace'
+      ?'<span class="je-b jep">REPLACE</span>'
+      :'<span class="je-b jer">REPAIR</span>';
+    return`<div class="je"><span class="je-n" style="color:${col}">${nm}</span>${badge}<span class="je-a">${fc(j.amt)}</span><span class="je-t">${j.ts}</span><button class="je-x" onclick="removeJob(${i})">✕</button></div>`;
+  }).join('');
+  T('jCount',jobs.length+' job'+(jobs.length!==1?'s':'')+' logged this month');
+}
+
+function updateTech(){
+  const jj=jobs.filter(j=>j.tech==='joe'), hj=jobs.filter(j=>j.tech==='harry');
+  const jT=jj.reduce((s,j)=>s+j.amt,0), hT=hj.reduce((s,j)=>s+j.amt,0);
+  const team=jT+hT, mo=C.m||1;
+
+  T('joeAmt',fc(jT)); T('jLeg',fc(jT));
+  T('joeJ',jj.length); T('joeR',jj.filter(j=>j.type==='repair').length);
+  T('joeP',jj.filter(j=>j.type==='replace').length);
+  const jp=Math.min(jT/(C.joe||1)*100,100);
+  W('jBar',jp.toFixed(1)+'%'); T('jPct',jp.toFixed(1)+'% of target'); T('jTgt','Target: '+fc(C.joe));
+
+  T('harryAmt',fc(hT)); T('hLeg',fc(hT));
+  T('harryJ',hj.length); T('harryR',hj.filter(j=>j.type==='repair').length);
+  T('harryP',hj.filter(j=>j.type==='replace').length);
+  const hp=Math.min(hT/(C.harry||1)*100,100);
+  W('hBar',hp.toFixed(1)+'%'); T('hPct',hp.toFixed(1)+'% of target'); T('hTgt','Target: '+fc(C.harry));
+
+  const jm=Math.min(jT/mo*100,100), hm=Math.min(hT/mo*100,100);
+  W('cbJ',jm.toFixed(1)+'%'); W('cbH',Math.min(hm,100-jm).toFixed(1)+'%');
+  T('teamTot',fc(team)+' combined');
+  T('tJ',jobs.length); T('tR',jobs.filter(j=>j.type==='repair').length);
+  T('tP',jobs.filter(j=>j.type==='replace').length);
+  T('tAvg',jobs.length?fc(team/jobs.length):'$0');
+}
+
+// ── Marketing ─────────────────────────────────────────────
+function syncMktInputs(){
+  MCH.forEach(c=>{
+    const d=MK[c]||{b:0,s:0,r:0};
+    const sv=(id,v)=>{const e=document.getElementById(id);if(e&&v)e.value=v};
+    sv(c+'B',d.b||''); sv(c+'S',d.s||''); sv(c+'R',d.r||'');
+  });
+}
+function saveMkt(){
+  MCH.forEach(c=>{
+    MK[c]={
+      b:parseFloat(document.getElementById(c+'B')?.value)||0,
+      s:parseFloat(document.getElementById(c+'S')?.value)||0,
+      r:parseFloat(document.getElementById(c+'R')?.value)||0
+    };
+  });
+  sto(KS.m,MK); updateMkt();
+}
+function updateMkt(){
+  let tS=0,tR=0,tB=0;
+  MCH.forEach(c=>{
+    const d=MK[c]; tS+=d.s; tR+=d.r; tB+=d.b;
+    const re=document.getElementById(c+'Rev'); if(re)re.textContent=fc(d.r);
+    const roe=document.getElementById(c+'ROI');
+    if(roe){
+      if(!d.s){roe.textContent='Enter spend to see ROI';roe.className='mc-roi roi-u';}
+      else{
+        const roi=((d.r-d.s)/d.s*100).toFixed(0),x=(d.r/d.s).toFixed(1);
+        roe.textContent='ROI: '+roi+'% ('+x+'x) · Spend: '+fc(d.s);
+        roe.className='mc-roi '+(roi>=0?'roi-p':'roi-n');
+      }
+    }
+  });
+  T('mktSpend',fc(tS)); T('mktRev',fc(tR));
+  const roiEl=document.getElementById('mktROI');
+  if(tS>0){
+    const roi=((tR-tS)/tS*100).toFixed(0);
+    roiEl.textContent=roi+'% ('+(tR/tS).toFixed(1)+'x)';
+    roiEl.className='mi-v '+(roi>=0?'ml-txt':'mr-txt');
+  } else{roiEl.textContent='—';roiEl.className='mi-v mc-txt';}
+  const left=tB-tS;
+  const le=document.getElementById('mktLeft');
+  le.textContent=tB>0?fc(Math.abs(left))+(left<0?' OVER':' remaining'):'Set budgets below';
+  le.className='mi-v '+(left<0?'mr-txt':'mg-txt');
+}
+
+// ── Helpers ───────────────────────────────────────────────
+const pad=n=>String(n).padStart(2,'0');
+function T(id,v){const e=document.getElementById(id);if(e)e.textContent=v;}
+function W(id,v){const e=document.getElementById(id);if(e)e.style.width=v;}
+function ff(n){if(n>=1e6)return'$'+(n/1e6).toFixed(2)+'M';if(n>=1e3)return'$'+(n/1e3).toFixed(1)+'K';return'$'+n.toFixed(2);}
+function fc(n){return'$'+Math.round(n).toLocaleString('en-US');}
+function dim(y,m){return new Date(y,m+1,0).getDate();}
+function doy(d){return Math.floor((d-new Date(d.getFullYear(),0,0))/864e5);}
+function diy(y){return((y%4===0&&y%100!==0)||y%400===0)?366:365;}
+function qinfo(now){
+  const q=Math.floor(now.getMonth()/3);
+  const qs=new Date(now.getFullYear(),q*3,1),qe=new Date(now.getFullYear(),q*3+3,0);
+  const tot=Math.round((qe-qs)/864e5)+1,el=Math.round((now-qs)/864e5);
+  return{el,rem:tot-el,tot};
+}
+
+// ── Main Tick (1 second) ──────────────────────────────────
+function tick(){
+  const now=new Date();
+  T('clock',now.toLocaleTimeString('en-US',{hour12:false}));
+  T('cdate',now.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'}));
+
+  // Work window
+  const ss=C.wsh*3600+C.wsm*60, es=C.weh*3600+C.wem*60, tw=es-ss;
+  const ns=now.getHours()*3600+now.getMinutes()*60+now.getSeconds();
+  const working=ns>=ss&&ns<=es;
+  const el=Math.max(0,Math.min(ns-ss,tw));
+  const dp=tw>0?Math.min(el/tw,1):0;
+  const te=C.d*dp, tl=Math.max(C.d-te,0);
+  const hr=el>0?te/(el/3600):0;
+
+  // Ticker updates
+  T('tkToday',fc(te)); T('tkLeft',fc(tl));
+  T('tkRate',ff(hr)+'/hr');
+  T('tkElapsed',Math.floor(el/3600)+'h '+Math.floor((el%3600)/60)+'m');
+  const dsl=Math.max(0,Math.floor((now-LAUNCH)/864e5));
+  T('tkDays',now<LAUNCH?'Not Open':dsl);
+
+  // Status
+  const dim_=dim(now.getFullYear(),now.getMonth()), dom=now.getDate();
+  const mEl=(dom-1+dp)/dim_*C.m;
+  const onTrack=mEl>=(dom/dim_*C.m)*.9;
+  const stEl=document.getElementById('tkStatus');
+  if(stEl){
+    stEl.textContent=working?(onTrack?'✅ On Track':'⚠️ Behind'):'🌙 Off Hours';
+    stEl.style.color=working?(onTrack?'var(--cyan)':'var(--gold)'):'var(--fog)';
+  }
+
+  // Monthly
+  const mL=Math.max(C.m-mEl,0), mP=Math.min(mEl/C.m*100,100);
+  T('mEarn',fc(mEl)); T('mLeft',fc(mL)); W('mBar',mP.toFixed(1)+'%'); T('mPct',mP.toFixed(1)+'%');
+
+  // Quarterly
+  const qi=qinfo(now), qt=C.a/4;
+  const qEl=(qi.el+dp)/qi.tot*qt, qL=Math.max(qt-qEl,0), qP=Math.min(qEl/qt*100,100);
+  T('qEarn',fc(qEl)); T('qLeft',fc(qL)); W('qBar',qP.toFixed(1)+'%'); T('qPct',qP.toFixed(1)+'%');
+
+  // Annual (Apr 27 → Apr 27)
+  const yrEl=now<LAUNCH?0:Math.min(dsl/YTOTAL,1);
+  const yE=yrEl*C.a, yL=Math.max(C.a-yE,0), yP=yrEl*100;
+  T('yEarn',fc(yE)); T('yLeft',fc(yL)); W('yBar',yP.toFixed(1)+'%'); T('yPct',yP.toFixed(1)+'%');
+  T('yrV',yP.toFixed(1)+'%'); W('yrBar',yP.toFixed(1)+'%'); T('yrD','of '+YTOTAL+' days');
+
+  // Pace
+  const pm=el>0?te/(el/60):0;
+  T('perMin',ff(pm)+'/min');
+  const dLeft=dim_-dom;
+  T('needDay',fc(dLeft>0?mL/dLeft:mL)+'/day');
+  T('dlMo',dLeft); T('dlQ',qi.rem); T('dlY',diy(now.getFullYear())-doy(now));
+}
+</script>
+</body>
+</html>
